@@ -13,7 +13,7 @@ version = "0.1.0"
 proofctl = "lean_proofctl.cli.main:main"
 
 [dependency-groups]
-dev = ["pytest>=8,<9", "ruff", "ty"]
+dev = ["pytest>=9.0.3,<10", "ruff", "ty"]
 
 [build-system]
 build-backend = "uv_build"
