@@ -1,0 +1,4 @@
+import PutnamBenchSubset.Putnam1962B1
+import PutnamBenchSubset.Putnam1986A2
+import PutnamBenchSubset.Putnam2001A1
+import PutnamBenchSubset.Putnam2020A1

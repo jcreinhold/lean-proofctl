@@ -1,0 +1,12 @@
+defaultTargets = ["PutnamBenchSubset"]
+keywords = ["math"]
+name = "PutnamBenchSubset"
+version = "0.1.0"
+
+[[require]]
+name = "mathlib"
+rev = "v4.29.0-rc6"
+scope = "leanprover-community"
+
+[[lean_lib]]
+name = "PutnamBenchSubset"

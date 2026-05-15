@@ -1,0 +1,33 @@
+benchmark:
+  family: miniF2F
+  suite: miniF2F-test
+  split: test
+  subset: subset-v1
+  source_repo: https://github.com/facebookresearch/miniF2F
+  source_commit: e4f113090ad82d64f8ce064d2f55b613a9b6bded
+  pass_k: 1
+workspace: ../minif2f
+defaults:
+  agent: none
+  command: prove
+  timeout_sec: 180
+  max_nodes: 8
+targets:
+  - id: mathd_numbertheory_3
+    file: MiniF2FBench/MathdNumbertheory3.lean
+    theorem: mathd_numbertheory_3
+  - id: mathd_algebra_33
+    file: MiniF2FBench/MathdAlgebra33.lean
+    theorem: mathd_algebra_33
+  - id: mathd_algebra_419
+    file: MiniF2FBench/MathdAlgebra419.lean
+    theorem: mathd_algebra_419
+  - id: mathd_numbertheory_299
+    file: MiniF2FBench/MathdNumbertheory299.lean
+    theorem: mathd_numbertheory_299
+  - id: mathd_numbertheory_1124
+    file: MiniF2FBench/MathdNumbertheory1124.lean
+    theorem: mathd_numbertheory_1124
+  - id: amc12b_2021_p3
+    file: MiniF2FBench/Amc12b2021P3.lean
+    theorem: amc12b_2021_p3

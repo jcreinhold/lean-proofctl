@@ -1,0 +1,27 @@
+benchmark:
+  family: PutnamBench
+  suite: PutnamBench
+  split: lean4
+  subset: subset-v1
+  source_repo: https://github.com/trishullab/PutnamBench
+  source_commit: b391f48b645c5b6101ed89aca96230226d654b3e
+  pass_k: 1
+workspace: ../putnambench
+defaults:
+  agent: none
+  command: prove
+  timeout_sec: 180
+  max_nodes: 8
+targets:
+  - id: putnam_1962_b1
+    file: PutnamBenchSubset/Putnam1962B1.lean
+    theorem: putnam_1962_b1
+  - id: putnam_1986_a2
+    file: PutnamBenchSubset/Putnam1986A2.lean
+    theorem: putnam_1986_a2
+  - id: putnam_2001_a1
+    file: PutnamBenchSubset/Putnam2001A1.lean
+    theorem: putnam_2001_a1
+  - id: putnam_2020_a1
+    file: PutnamBenchSubset/Putnam2020A1.lean
+    theorem: putnam_2020_a1

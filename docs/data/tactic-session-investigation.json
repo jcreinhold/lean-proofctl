@@ -1,0 +1,588 @@
+{
+  "comparison_method": {
+    "classification_rule": "verified on exit 0; frontier on unsolved-goals-only diagnostics; failed otherwise",
+    "evaluation_shape": "run whole-body over all targets, then run tactic search only on targets that whole-body did not verify",
+    "lean_timeout_seconds": 5.0,
+    "max_tactic_depth": 1,
+    "tactic_bank": [
+      {
+        "id": "norm-num",
+        "tactic": "norm_num"
+      },
+      {
+        "id": "omega",
+        "tactic": "omega"
+      }
+    ],
+    "whole_body_candidate_bank": [
+      {
+        "body": "by\n  norm_num\n",
+        "id": "norm-num"
+      },
+      {
+        "body": "by\n  omega\n",
+        "id": "omega"
+      },
+      {
+        "body": "by\n  native_decide\n",
+        "id": "native-decide"
+      }
+    ]
+  },
+  "generated_at": "2026-03-28T18:48:01Z",
+  "probe_examples": [
+    {
+      "command": "proof-state-after-last-tactic",
+      "first_goal": null,
+      "goal_count": 0,
+      "source": "tactic-goals-after-last",
+      "status": "ok",
+      "stderr": "warning: mathlib: repository '/Users/jcreinhold/Code/kan/tools/kan-prover/benchmarks/minif2f/.lake/packages/mathlib' has local changes\nwarning: plausible: repository '/Users/jcreinhold/Code/kan/tools/kan-prover/benchmarks/minif2f/.lake/packages/plausible' has local changes\nwarning: LeanSearchClient: repository '/Users/jcreinhold/Code/kan/tools/kan-prover/benchmarks/minif2f/.lake/packages/LeanSearchClient' has local changes\nwarning: importGraph: repository '/Users/jcreinhold/Code/kan/tools/kan-prover/benchmarks/minif2f/.lake/packages/importGraph' has local changes\nwarning: aesop: repository '/Users/jcreinhold/Code/kan/tools/kan-prover/benchmarks/minif2f/.lake/packages/aesop' has local changes\nwarning: Qq: repository '/Users/jcreinhold/Code/kan/tools/kan-prover/benchmarks/minif2f/.lake/packages/Qq' has local changes\nwarning: batteries: repository '/Users/jcreinhold/Code/kan/tools/kan-prover/benchmarks/minif2f/.lake/packages/batteries' has local changes\nwarning: Cli: repository '/Users/jcreinhold/Code/kan/tools/kan-prover/benchmarks/minif2f/.lake/packages/Cli' has local changes",
+      "target_id": "mathd_numbertheory_1124",
+      "wall_time_seconds": 12.850963333854452
+    }
+  ],
+  "summary": {
+    "tactic_search_solved": 0,
+    "tactic_search_total_calls": 20,
+    "tactic_search_total_wall_time_seconds": 100.393,
+    "tactic_target_count": 10,
+    "target_count": 10,
+    "whole_body_solved": 0,
+    "whole_body_total_calls": 30,
+    "whole_body_total_wall_time_seconds": 150.619,
+    "whole_body_unsolved": 10
+  },
+  "targets": [
+    {
+      "suite": "miniF2F-test",
+      "tactic_search": {
+        "attempts": [
+          {
+            "body": "by\n  norm_num\n",
+            "candidate_id": "norm-num",
+            "status": "failed",
+            "wall_time_seconds": 5.020015666959807
+          },
+          {
+            "body": "by\n  omega\n",
+            "candidate_id": "omega",
+            "status": "failed",
+            "wall_time_seconds": 5.0212994168978184
+          }
+        ],
+        "status": "failed",
+        "verifier_calls": 2,
+        "wall_time_seconds": 10.041315083857626,
+        "winning_body": null,
+        "winning_candidate_id": null
+      },
+      "target_id": "mathd_numbertheory_3",
+      "theorem": "mathd_numbertheory_3",
+      "whole_body": {
+        "attempts": [
+          {
+            "body": "by\n  norm_num\n",
+            "candidate_id": "norm-num",
+            "status": "failed",
+            "wall_time_seconds": 5.017020457889885
+          },
+          {
+            "body": "by\n  omega\n",
+            "candidate_id": "omega",
+            "status": "failed",
+            "wall_time_seconds": 5.020486625144258
+          },
+          {
+            "body": "by\n  native_decide\n",
+            "candidate_id": "native-decide",
+            "status": "failed",
+            "wall_time_seconds": 5.0214622498024255
+          }
+        ],
+        "status": "failed",
+        "verifier_calls": 3,
+        "wall_time_seconds": 15.058969332836568,
+        "winning_body": null,
+        "winning_candidate_id": null
+      }
+    },
+    {
+      "suite": "miniF2F-test",
+      "tactic_search": {
+        "attempts": [
+          {
+            "body": "by\n  norm_num\n",
+            "candidate_id": "norm-num",
+            "status": "failed",
+            "wall_time_seconds": 5.026712999911979
+          },
+          {
+            "body": "by\n  omega\n",
+            "candidate_id": "omega",
+            "status": "failed",
+            "wall_time_seconds": 5.019360375124961
+          }
+        ],
+        "status": "failed",
+        "verifier_calls": 2,
+        "wall_time_seconds": 10.04607337503694,
+        "winning_body": null,
+        "winning_candidate_id": null
+      },
+      "target_id": "mathd_algebra_33",
+      "theorem": "mathd_algebra_33",
+      "whole_body": {
+        "attempts": [
+          {
+            "body": "by\n  norm_num\n",
+            "candidate_id": "norm-num",
+            "status": "failed",
+            "wall_time_seconds": 5.022824499988928
+          },
+          {
+            "body": "by\n  omega\n",
+            "candidate_id": "omega",
+            "status": "failed",
+            "wall_time_seconds": 5.019790499936789
+          },
+          {
+            "body": "by\n  native_decide\n",
+            "candidate_id": "native-decide",
+            "status": "failed",
+            "wall_time_seconds": 5.019322333857417
+          }
+        ],
+        "status": "failed",
+        "verifier_calls": 3,
+        "wall_time_seconds": 15.061937333783135,
+        "winning_body": null,
+        "winning_candidate_id": null
+      }
+    },
+    {
+      "suite": "miniF2F-test",
+      "tactic_search": {
+        "attempts": [
+          {
+            "body": "by\n  norm_num\n",
+            "candidate_id": "norm-num",
+            "status": "failed",
+            "wall_time_seconds": 5.019542417023331
+          },
+          {
+            "body": "by\n  omega\n",
+            "candidate_id": "omega",
+            "status": "failed",
+            "wall_time_seconds": 5.020127666182816
+          }
+        ],
+        "status": "failed",
+        "verifier_calls": 2,
+        "wall_time_seconds": 10.039670083206147,
+        "winning_body": null,
+        "winning_candidate_id": null
+      },
+      "target_id": "mathd_algebra_419",
+      "theorem": "mathd_algebra_419",
+      "whole_body": {
+        "attempts": [
+          {
+            "body": "by\n  norm_num\n",
+            "candidate_id": "norm-num",
+            "status": "failed",
+            "wall_time_seconds": 5.020035125082359
+          },
+          {
+            "body": "by\n  omega\n",
+            "candidate_id": "omega",
+            "status": "failed",
+            "wall_time_seconds": 5.023117624921724
+          },
+          {
+            "body": "by\n  native_decide\n",
+            "candidate_id": "native-decide",
+            "status": "failed",
+            "wall_time_seconds": 5.023429916938767
+          }
+        ],
+        "status": "failed",
+        "verifier_calls": 3,
+        "wall_time_seconds": 15.06658266694285,
+        "winning_body": null,
+        "winning_candidate_id": null
+      }
+    },
+    {
+      "suite": "miniF2F-test",
+      "tactic_search": {
+        "attempts": [
+          {
+            "body": "by\n  norm_num\n",
+            "candidate_id": "norm-num",
+            "status": "failed",
+            "wall_time_seconds": 5.019230999983847
+          },
+          {
+            "body": "by\n  omega\n",
+            "candidate_id": "omega",
+            "status": "failed",
+            "wall_time_seconds": 5.019368292065337
+          }
+        ],
+        "status": "failed",
+        "verifier_calls": 2,
+        "wall_time_seconds": 10.038599292049184,
+        "winning_body": null,
+        "winning_candidate_id": null
+      },
+      "target_id": "mathd_numbertheory_299",
+      "theorem": "mathd_numbertheory_299",
+      "whole_body": {
+        "attempts": [
+          {
+            "body": "by\n  norm_num\n",
+            "candidate_id": "norm-num",
+            "status": "failed",
+            "wall_time_seconds": 5.026258000172675
+          },
+          {
+            "body": "by\n  omega\n",
+            "candidate_id": "omega",
+            "status": "failed",
+            "wall_time_seconds": 5.050210332963616
+          },
+          {
+            "body": "by\n  native_decide\n",
+            "candidate_id": "native-decide",
+            "status": "failed",
+            "wall_time_seconds": 5.019689957844093
+          }
+        ],
+        "status": "failed",
+        "verifier_calls": 3,
+        "wall_time_seconds": 15.096158290980384,
+        "winning_body": null,
+        "winning_candidate_id": null
+      }
+    },
+    {
+      "suite": "miniF2F-test",
+      "tactic_search": {
+        "attempts": [
+          {
+            "body": "by\n  norm_num\n",
+            "candidate_id": "norm-num",
+            "status": "failed",
+            "wall_time_seconds": 5.018341375049204
+          },
+          {
+            "body": "by\n  omega\n",
+            "candidate_id": "omega",
+            "status": "failed",
+            "wall_time_seconds": 5.019164582947269
+          }
+        ],
+        "status": "failed",
+        "verifier_calls": 2,
+        "wall_time_seconds": 10.037505957996473,
+        "winning_body": null,
+        "winning_candidate_id": null
+      },
+      "target_id": "mathd_numbertheory_1124",
+      "theorem": "mathd_numbertheory_1124",
+      "whole_body": {
+        "attempts": [
+          {
+            "body": "by\n  norm_num\n",
+            "candidate_id": "norm-num",
+            "status": "failed",
+            "wall_time_seconds": 5.01961287506856
+          },
+          {
+            "body": "by\n  omega\n",
+            "candidate_id": "omega",
+            "status": "failed",
+            "wall_time_seconds": 5.018693499965593
+          },
+          {
+            "body": "by\n  native_decide\n",
+            "candidate_id": "native-decide",
+            "status": "failed",
+            "wall_time_seconds": 5.021202499978244
+          }
+        ],
+        "status": "failed",
+        "verifier_calls": 3,
+        "wall_time_seconds": 15.059508875012398,
+        "winning_body": null,
+        "winning_candidate_id": null
+      }
+    },
+    {
+      "suite": "miniF2F-test",
+      "tactic_search": {
+        "attempts": [
+          {
+            "body": "by\n  norm_num\n",
+            "candidate_id": "norm-num",
+            "status": "failed",
+            "wall_time_seconds": 5.017823916161433
+          },
+          {
+            "body": "by\n  omega\n",
+            "candidate_id": "omega",
+            "status": "failed",
+            "wall_time_seconds": 5.019161707954481
+          }
+        ],
+        "status": "failed",
+        "verifier_calls": 2,
+        "wall_time_seconds": 10.036985624115914,
+        "winning_body": null,
+        "winning_candidate_id": null
+      },
+      "target_id": "amc12b_2021_p3",
+      "theorem": "amc12b_2021_p3",
+      "whole_body": {
+        "attempts": [
+          {
+            "body": "by\n  norm_num\n",
+            "candidate_id": "norm-num",
+            "status": "failed",
+            "wall_time_seconds": 5.016639875015244
+          },
+          {
+            "body": "by\n  omega\n",
+            "candidate_id": "omega",
+            "status": "failed",
+            "wall_time_seconds": 5.017884040949866
+          },
+          {
+            "body": "by\n  native_decide\n",
+            "candidate_id": "native-decide",
+            "status": "failed",
+            "wall_time_seconds": 5.018299374962226
+          }
+        ],
+        "status": "failed",
+        "verifier_calls": 3,
+        "wall_time_seconds": 15.052823290927336,
+        "winning_body": null,
+        "winning_candidate_id": null
+      }
+    },
+    {
+      "suite": "PutnamBench",
+      "tactic_search": {
+        "attempts": [
+          {
+            "body": "by\n  norm_num\n",
+            "candidate_id": "norm-num",
+            "status": "failed",
+            "wall_time_seconds": 5.018737250007689
+          },
+          {
+            "body": "by\n  omega\n",
+            "candidate_id": "omega",
+            "status": "failed",
+            "wall_time_seconds": 5.018981874920428
+          }
+        ],
+        "status": "failed",
+        "verifier_calls": 2,
+        "wall_time_seconds": 10.037719124928117,
+        "winning_body": null,
+        "winning_candidate_id": null
+      },
+      "target_id": "putnam_1962_b1",
+      "theorem": "putnam_1962_b1",
+      "whole_body": {
+        "attempts": [
+          {
+            "body": "by\n  norm_num\n",
+            "candidate_id": "norm-num",
+            "status": "failed",
+            "wall_time_seconds": 5.018328375183046
+          },
+          {
+            "body": "by\n  omega\n",
+            "candidate_id": "omega",
+            "status": "failed",
+            "wall_time_seconds": 5.020740750012919
+          },
+          {
+            "body": "by\n  native_decide\n",
+            "candidate_id": "native-decide",
+            "status": "failed",
+            "wall_time_seconds": 5.018209458095953
+          }
+        ],
+        "status": "failed",
+        "verifier_calls": 3,
+        "wall_time_seconds": 15.057278583291918,
+        "winning_body": null,
+        "winning_candidate_id": null
+      }
+    },
+    {
+      "suite": "PutnamBench",
+      "tactic_search": {
+        "attempts": [
+          {
+            "body": "by\n  norm_num\n",
+            "candidate_id": "norm-num",
+            "status": "failed",
+            "wall_time_seconds": 5.016538458876312
+          },
+          {
+            "body": "by\n  omega\n",
+            "candidate_id": "omega",
+            "status": "failed",
+            "wall_time_seconds": 5.020135542144999
+          }
+        ],
+        "status": "failed",
+        "verifier_calls": 2,
+        "wall_time_seconds": 10.03667400102131,
+        "winning_body": null,
+        "winning_candidate_id": null
+      },
+      "target_id": "putnam_1986_a2",
+      "theorem": "putnam_1986_a2",
+      "whole_body": {
+        "attempts": [
+          {
+            "body": "by\n  norm_num\n",
+            "candidate_id": "norm-num",
+            "status": "failed",
+            "wall_time_seconds": 5.0184366251342
+          },
+          {
+            "body": "by\n  omega\n",
+            "candidate_id": "omega",
+            "status": "failed",
+            "wall_time_seconds": 5.019117082934827
+          },
+          {
+            "body": "by\n  native_decide\n",
+            "candidate_id": "native-decide",
+            "status": "failed",
+            "wall_time_seconds": 5.018152249976993
+          }
+        ],
+        "status": "failed",
+        "verifier_calls": 3,
+        "wall_time_seconds": 15.055705958046019,
+        "winning_body": null,
+        "winning_candidate_id": null
+      }
+    },
+    {
+      "suite": "PutnamBench",
+      "tactic_search": {
+        "attempts": [
+          {
+            "body": "by\n  norm_num\n",
+            "candidate_id": "norm-num",
+            "status": "failed",
+            "wall_time_seconds": 5.017741332994774
+          },
+          {
+            "body": "by\n  omega\n",
+            "candidate_id": "omega",
+            "status": "failed",
+            "wall_time_seconds": 5.020333374850452
+          }
+        ],
+        "status": "failed",
+        "verifier_calls": 2,
+        "wall_time_seconds": 10.038074707845226,
+        "winning_body": null,
+        "winning_candidate_id": null
+      },
+      "target_id": "putnam_2001_a1",
+      "theorem": "putnam_2001_a1",
+      "whole_body": {
+        "attempts": [
+          {
+            "body": "by\n  norm_num\n",
+            "candidate_id": "norm-num",
+            "status": "failed",
+            "wall_time_seconds": 5.018200624966994
+          },
+          {
+            "body": "by\n  omega\n",
+            "candidate_id": "omega",
+            "status": "failed",
+            "wall_time_seconds": 5.019029709044844
+          },
+          {
+            "body": "by\n  native_decide\n",
+            "candidate_id": "native-decide",
+            "status": "failed",
+            "wall_time_seconds": 5.019952500006184
+          }
+        ],
+        "status": "failed",
+        "verifier_calls": 3,
+        "wall_time_seconds": 15.057182834018022,
+        "winning_body": null,
+        "winning_candidate_id": null
+      }
+    },
+    {
+      "suite": "PutnamBench",
+      "tactic_search": {
+        "attempts": [
+          {
+            "body": "by\n  norm_num\n",
+            "candidate_id": "norm-num",
+            "status": "failed",
+            "wall_time_seconds": 5.021213500062004
+          },
+          {
+            "body": "by\n  omega\n",
+            "candidate_id": "omega",
+            "status": "failed",
+            "wall_time_seconds": 5.019558749860153
+          }
+        ],
+        "status": "failed",
+        "verifier_calls": 2,
+        "wall_time_seconds": 10.040772249922156,
+        "winning_body": null,
+        "winning_candidate_id": null
+      },
+      "target_id": "putnam_2020_a1",
+      "theorem": "putnam_2020_a1",
+      "whole_body": {
+        "attempts": [
+          {
+            "body": "by\n  norm_num\n",
+            "candidate_id": "norm-num",
+            "status": "failed",
+            "wall_time_seconds": 5.018043375108391
+          },
+          {
+            "body": "by\n  omega\n",
+            "candidate_id": "omega",
+            "status": "failed",
+            "wall_time_seconds": 5.017103667138144
+          },
+          {
+            "body": "by\n  native_decide\n",
+            "candidate_id": "native-decide",
+            "status": "failed",
+            "wall_time_seconds": 5.01815191609785
+          }
+        ],
+        "status": "failed",
+        "verifier_calls": 3,
+        "wall_time_seconds": 15.053298958344385,
+        "winning_body": null,
+        "winning_candidate_id": null
+      }
+    }
+  ]
+}

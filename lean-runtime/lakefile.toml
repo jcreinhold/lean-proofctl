@@ -1,0 +1,26 @@
+defaultTargets = ["KanRuntime"]
+keywords = ["math"]
+lintDriver = "batteries/runLinter"
+name = "KanRuntime"
+version = "0.1.0"
+
+[leanOptions]
+maxSynthPendingDepth = 3
+pp.unicode.fun = true                 # pretty-prints `fun a ↦ b`
+relaxedAutoImplicit = false
+weak.linter.mathlibStandardSet = true
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+
+[[lean_lib]]
+name = "KanRuntime"
+
+[[lean_lib]]
+name = "Tools"
+
+[[lean_exe]]
+name = "SemanticProbe"
+root = "Tools.SemanticProbe.Main"
+supportInterpreter = true

@@ -1,0 +1,6 @@
+import MiniF2FBench.MathdNumbertheory3
+import MiniF2FBench.MathdAlgebra33
+import MiniF2FBench.MathdAlgebra419
+import MiniF2FBench.MathdNumbertheory299
+import MiniF2FBench.MathdNumbertheory1124
+import MiniF2FBench.Amc12b2021P3

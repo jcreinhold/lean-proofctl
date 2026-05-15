@@ -1,0 +1,30 @@
+{
+  "plan": {
+    "summary": "Prove `helper_truth` first, then use it to close `helper_target`.",
+    "strategy": "The theorem body names a missing lemma. Verify that helper in a managed helper module, then finish the parent theorem with the imported result.",
+    "steps": [
+      {
+        "step_id": "step-1",
+        "title": "Create the missing helper",
+        "goal": "Introduce a managed helper theorem named `helper_truth` that proves `True`.",
+        "rationale": "A direct body replacement still leaves an unresolved identifier, so the helper must exist before the parent theorem can verify.",
+        "depends_on": [],
+        "helper_suggestions": ["helper_truth"],
+        "retrieval_refs": ["same-file-001"],
+        "file_actions": ["add a managed helper theorem `helper_truth : True`"]
+      },
+      {
+        "step_id": "step-2",
+        "title": "Use the verified helper",
+        "goal": "Finish `helper_target` with `exact helper_truth` once the helper is available.",
+        "rationale": "After the helper verifies, the parent theorem is a one-line application.",
+        "depends_on": ["step-1"],
+        "helper_suggestions": [],
+        "retrieval_refs": [],
+        "file_actions": ["replace the theorem body with `by exact helper_truth`"]
+      }
+    ],
+    "helper_gaps": ["helper_truth"],
+    "risks": []
+  }
+}

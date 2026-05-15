@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kan-prover.local/schemas/decomposition-v1.json",
+  "title": "DecompositionPlanV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["step_id", "title", "goal", "layer"],
+  "properties": {
+    "step_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "goal": {
+      "type": "string",
+      "minLength": 1
+    },
+    "layer": {
+      "enum": ["missing-lemma", "local-patch"]
+    },
+    "helper_name": {
+      "type": ["string", "null"]
+    },
+    "helper_statement": {
+      "type": ["string", "null"]
+    },
+    "helper_proof": {
+      "type": ["string", "null"]
+    },
+    "helper_imports": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "file_hint": {
+      "type": ["string", "null"]
+    }
+  }
+}

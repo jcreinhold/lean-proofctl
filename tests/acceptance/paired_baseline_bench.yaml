@@ -1,0 +1,99 @@
+workspace: ../../../../
+protocol:
+  timeout_seconds: 120
+  max_backend_calls: 3
+  token_budget: 4096
+theorem_suite:
+  - id: easy-cfgrade-le-refl
+    difficulty: easy
+    file: KanProofs/Algebra/ControlFlowGrades.lean
+    theorem: CFGrade.le_refl
+  - id: medium-grade-add-comm
+    difficulty: medium
+    file: KanProofs/Algebra/Grades.lean
+    theorem: Grade.add_comm
+  - id: hard-cfgrade-galois-connection
+    difficulty: hard
+    file: KanProofs/Algebra/ControlFlowGrades.lean
+    theorem: CFGrade.galois_connection
+conditions:
+  - id: baseline-codex
+    label: baseline-codex
+    workflow: plain
+    backend: codex
+    agent: none
+    command: solve
+    prompt_template_name: plain_session
+    enable_retrieval: false
+    enable_decomposition: false
+    theorems:
+      easy-cfgrade-le-refl:
+        candidate_files:
+          - repo_root_cfgrade_le_refl.body.lean
+      medium-grade-add-comm:
+        candidate_files:
+          - grade_add_comm.body.lean
+      hard-cfgrade-galois-connection:
+        candidate_files:
+          - cfgrade_galois_connection_bad.body.lean
+          - cfgrade_galois_connection_bad.body.lean
+          - cfgrade_galois_connection_bad.body.lean
+  - id: baseline-claude
+    label: baseline-claude
+    workflow: plain
+    backend: claude
+    agent: none
+    command: solve
+    prompt_template_name: plain_session
+    enable_retrieval: false
+    enable_decomposition: false
+    theorems:
+      easy-cfgrade-le-refl:
+        candidate_files:
+          - repo_root_cfgrade_le_refl.body.lean
+      medium-grade-add-comm:
+        candidate_files:
+          - grade_add_comm.body.lean
+      hard-cfgrade-galois-connection:
+        candidate_files:
+          - cfgrade_galois_connection_bad.body.lean
+          - cfgrade_galois_connection_bad.body.lean
+          - cfgrade_galois_connection_bad.body.lean
+  - id: tool-codex
+    label: tool-codex
+    workflow: tool
+    backend: codex
+    agent: none
+    command: prove
+    max_nodes: 8
+    theorems:
+      easy-cfgrade-le-refl:
+        candidate_files:
+          - repo_root_cfgrade_le_refl.body.lean
+      medium-grade-add-comm:
+        candidate_files:
+          - grade_add_comm.body.lean
+      hard-cfgrade-galois-connection:
+        plan_files:
+          - cfgrade_galois_connection.plan.json
+        theorem_step_files:
+          - cfgrade_galois_connection.step1.json
+  - id: tool-claude
+    label: tool-claude
+    workflow: tool
+    backend: claude
+    agent: none
+    command: prove
+    max_nodes: 8
+    theorems:
+      easy-cfgrade-le-refl:
+        candidate_files:
+          - repo_root_cfgrade_le_refl.body.lean
+      medium-grade-add-comm:
+        candidate_files:
+          - grade_add_comm.body.lean
+      hard-cfgrade-galois-connection:
+        plan_files:
+          - cfgrade_galois_connection.plan.json
+        theorem_step_files:
+          - cfgrade_galois_connection.step1.json

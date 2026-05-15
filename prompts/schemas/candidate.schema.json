@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kan-prover.local/schemas/theorem-body-candidate-v1.json",
+  "title": "TheoremBodyCandidateV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["candidate_id", "theorem_name", "body"],
+  "properties": {
+    "candidate_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "theorem_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "body": {
+      "type": "string",
+      "minLength": 1
+    },
+    "replay_from": {
+      "type": ["string", "null"]
+    }
+  }
+}

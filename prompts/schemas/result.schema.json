@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kan-prover.local/schemas/backend-result-v1.json",
+  "title": "StrictBackendResultV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "task_kind", "result_kind"],
+  "properties": {
+    "schema_version": {
+      "const": "v1"
+    },
+    "task_kind": {
+      "enum": ["solve", "repair", "decompose", "plan", "theorem_step", "minimize"]
+    },
+    "result_kind": {
+      "enum": ["theorem_body_replacements", "decomposition", "theorem_plan", "theorem_session_actions", "no_progress"]
+    },
+    "message": {
+      "type": "string"
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "$ref": "./candidate.schema.json"
+      }
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "$ref": "./decomposition.schema.json"
+      }
+    },
+    "plan": {
+      "$ref": "./plan.schema.json"
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "$ref": "./theorem-session-action.schema.json"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "result_kind": {
+            "const": "theorem_body_replacements"
+          }
+        }
+      },
+      "then": {
+        "required": ["candidates"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "result_kind": { "const": "decomposition" }
+        }
+      },
+      "then": {
+        "required": ["steps"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "result_kind": { "const": "theorem_plan" }
+        }
+      },
+      "then": {
+        "required": ["plan"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "result_kind": { "const": "theorem_session_actions" }
+        }
+      },
+      "then": {
+        "required": ["actions"]
+      }
+    }
+  ]
+}

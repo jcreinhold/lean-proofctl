@@ -1,0 +1,11 @@
+{
+  "actions": [
+    {
+      "action_id": "replace-1",
+      "kind": "replace_theorem_draft",
+      "theorem_name": "CFGrade.galois_connection",
+      "body": "by\n  exact gc_embed_project cf g\n",
+      "rationale": "Use the exact pointwise Galois-connection theorem directly."
+    }
+  ]
+}

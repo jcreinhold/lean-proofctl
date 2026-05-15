@@ -1,0 +1,30 @@
+{
+  "plan": {
+    "summary": "Case split on `cf` and simplify the finite order table.",
+    "strategy": "The theorem is reflexivity for a three-constructor order, so exhaustive cases plus simplification close every goal.",
+    "steps": [
+      {
+        "step_id": "step-1",
+        "title": "Split on the control-flow grade",
+        "goal": "Expose the three constructors of `CFGrade` in the goal.",
+        "rationale": "The order is defined by cases on the grade constructors, so the proof starts by splitting on `cf`.",
+        "depends_on": [],
+        "helper_suggestions": [],
+        "retrieval_refs": ["same-file-001"],
+        "file_actions": ["case split on `cf`"]
+      },
+      {
+        "step_id": "step-2",
+        "title": "Simplify each branch",
+        "goal": "Reduce every branch with the order definition and `simp`.",
+        "rationale": "Each branch is a direct simplification of `CFGrade.le` after the case split.",
+        "depends_on": ["step-1"],
+        "helper_suggestions": [],
+        "retrieval_refs": [],
+        "file_actions": ["finish each branch with `simp [LE.le, le]`"]
+      }
+    ],
+    "helper_gaps": [],
+    "risks": []
+  }
+}

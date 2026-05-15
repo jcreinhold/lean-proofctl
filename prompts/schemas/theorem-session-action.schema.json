@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kan-prover.local/schemas/theorem-session-action-v1.json",
+  "title": "TheoremSessionActionV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["action_id", "kind"],
+  "properties": {
+    "action_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kind": {
+      "enum": [
+        "append_tactic_text",
+        "replace_theorem_draft",
+        "propose_helper_lemma",
+        "suggest_checkpoint_label",
+        "recommend_strategy_shift"
+      ]
+    },
+    "tactic_text": {
+      "type": "string",
+      "minLength": 1
+    },
+    "theorem_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "body": {
+      "type": "string",
+      "minLength": 1
+    },
+    "helper": {
+      "$ref": "./helper-lemma.schema.json"
+    },
+    "label": {
+      "type": "string",
+      "minLength": 1
+    },
+    "strategy": {
+      "type": "string",
+      "minLength": 1
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "append_tactic_text"
+          }
+        }
+      },
+      "then": {
+        "required": ["tactic_text"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "replace_theorem_draft"
+          }
+        }
+      },
+      "then": {
+        "required": ["theorem_name", "body"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "propose_helper_lemma"
+          }
+        }
+      },
+      "then": {
+        "required": ["helper"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "suggest_checkpoint_label"
+          }
+        }
+      },
+      "then": {
+        "required": ["label"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "recommend_strategy_shift"
+          }
+        }
+      },
+      "then": {
+        "required": ["strategy", "rationale"]
+      }
+    }
+  ]
+}

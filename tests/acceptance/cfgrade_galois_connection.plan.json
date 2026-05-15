@@ -1,0 +1,30 @@
+{
+  "plan": {
+    "summary": "Use the graph workflow to replace the theorem draft with the exact pointwise Galois-connection proof.",
+    "strategy": "state-search exact-reuse",
+    "steps": [
+      {
+        "step_id": "inspect",
+        "title": "Inspect the stored equivalence proof",
+        "goal": "Focus on the exact theorem that already states the pointwise Galois connection.",
+        "rationale": "The target theorem can close by exact reuse of the stronger stored theorem.",
+        "depends_on": [],
+        "helper_suggestions": [],
+        "retrieval_refs": [],
+        "file_actions": ["inspect-proof-state"]
+      },
+      {
+        "step_id": "close",
+        "title": "Close the target by exact theorem reuse",
+        "goal": "Replace the theorem body with the exact pointwise proof term.",
+        "rationale": "The stored theorem already proves the full target statement for these parameters.",
+        "depends_on": ["inspect"],
+        "helper_suggestions": [],
+        "retrieval_refs": [],
+        "file_actions": ["replace-theorem-body"]
+      }
+    ],
+    "helper_gaps": [],
+    "risks": []
+  }
+}

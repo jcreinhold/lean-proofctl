@@ -1,0 +1,10 @@
+{
+  "actions": [
+    {
+      "action_id": "action-001",
+      "kind": "append_tactic_text",
+      "tactic_text": "  exact False.elim ?h2",
+      "rationale": "Keep the theorem unsolved so the stored graph still has frontier work to resume."
+    }
+  ]
+}

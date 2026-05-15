@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kan-prover.local/schemas/helper-lemma-v1.json",
+  "title": "HelperLemmaV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["helper_name", "helper_statement", "proof_stub"],
+  "properties": {
+    "helper_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "helper_statement": {
+      "type": "string",
+      "minLength": 1
+    },
+    "proof_stub": {
+      "type": "string",
+      "minLength": 1
+    },
+    "helper_imports": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

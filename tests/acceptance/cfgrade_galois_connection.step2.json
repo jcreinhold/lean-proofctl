@@ -1,0 +1,11 @@
+{
+  "actions": [
+    {
+      "action_id": "replace-1",
+      "kind": "replace_theorem_draft",
+      "theorem_name": "CFGrade.galois_connection",
+      "body": "by\n  exact galois_connection_helper cf g",
+      "rationale": "Reuse the verified helper theorem directly."
+    }
+  ]
+}

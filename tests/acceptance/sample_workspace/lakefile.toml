@@ -1,0 +1,6 @@
+defaultTargets = ["DownstreamSample"]
+name = "DownstreamSample"
+version = "0.1.0"
+
+[[lean_lib]]
+name = "DownstreamSample"

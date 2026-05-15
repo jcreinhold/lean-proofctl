@@ -1,0 +1,21 @@
+defaults:
+  agent: none
+  command: prove
+  timeout_sec: 120
+  max_nodes: 6
+targets:
+  - workspace: ../../../../
+    file: KanProofs/Algebra/ControlFlowGrades.lean
+    theorem: CFGrade.le_refl
+    plan_files:
+      - repo_root_cfgrade_le_refl.plan.json
+    candidate_files:
+      - repo_root_cfgrade_le_refl.body.lean
+  - workspace: sample_workspace
+    file: DownstreamSample/HelperTarget.lean
+    theorem: helper_target
+    timeout_sec: 60
+    plan_files:
+      - sample_helper_target.plan.json
+    theorem_step_files:
+      - sample_helper_target.step.json

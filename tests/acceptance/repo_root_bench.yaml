@@ -1,0 +1,10 @@
+defaults:
+  agent: none
+  command: repair
+  max_rounds: 1
+  timeout_sec: 120
+targets:
+  - file: KanProofs/Algebra/ControlFlowGrades.lean
+    theorem: CFGrade.le_refl
+    candidate_files:
+      - repo_root_cfgrade_le_refl.body.lean

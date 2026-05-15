@@ -1,0 +1,30 @@
+{
+  "plan": {
+    "summary": "Prove the theorem directly from `True.intro`.",
+    "strategy": "Close the goal immediately, then note there are no helper obligations.",
+    "steps": [
+      {
+        "step_id": "step-1",
+        "title": "Inspect the goal",
+        "goal": "Confirm the target goal is `True` with no needed premises.",
+        "rationale": "A direct constructor proof is enough if the goal has no hidden obligations.",
+        "depends_on": [],
+        "helper_suggestions": [],
+        "retrieval_refs": ["same-file-001"],
+        "file_actions": []
+      },
+      {
+        "step_id": "step-2",
+        "title": "Close with the constructor",
+        "goal": "Use `True.intro` to finish the theorem body.",
+        "rationale": "The theorem statement is propositionally trivial, so the direct constructor is the shortest proof.",
+        "depends_on": ["step-1"],
+        "helper_suggestions": [],
+        "retrieval_refs": [],
+        "file_actions": ["replace theorem body with `by exact True.intro`"]
+      }
+    ],
+    "helper_gaps": [],
+    "risks": []
+  }
+}

@@ -1,0 +1,59 @@
+[project]
+authors = [{ name = "Jacob Reinhold", email = "5241441+jcreinhold@users.noreply.github.com" }]
+dependencies = ["PyYAML>=6,<7"]
+description = "Verifier-first proof search tooling with a Python orchestration layer."
+name = "kan-prover"
+readme = "README.md"
+requires-python = ">=3.14"
+version = "0.1.0"
+
+[project.scripts]
+kan-prover = "kan_prover.cli.main:main"
+
+[dependency-groups]
+dev = ["pytest>=8,<9", "ruff", "ty"]
+
+[build-system]
+build-backend = "uv_build"
+requires = ["uv_build>=0.10.9,<0.11.0"]
+
+[tool.ruff]
+extend-exclude = ["lean-runtime"]
+line-length = 120
+src = ["src", "tests"]
+target-version = "py314"
+
+[tool.ruff.lint]
+ignore = ["D203", "D212"]
+select = ["ANN", "B", "C4", "D", "E", "F", "I", "PTH", "RET", "RUF", "SIM", "UP", "W"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["D"]
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ty.environment]
+python-version = "3.14"
+root = ["./src", "./tests"]
+
+[tool.ty.src]
+include = ["src", "tests"]
+respect-ignore-files = true
+
+[tool.ty.terminal]
+error-on-warning = true
+output-format = "concise"
+
+[tool.ty.rules]
+all = "error"
+
+[tool.pytest.ini_options]
+addopts = "-m 'not integration and not acceptance and not slow'"
+markers = [
+  "acceptance: downstream product-path tests over real workspaces",
+  "integration: tests that exercise real Lean, Lake, or workspace-backed command paths",
+  "slow: tests that are materially slower than the default unit suite",
+]
+python_files = ["test_*.py"]
+testpaths = ["tests"]

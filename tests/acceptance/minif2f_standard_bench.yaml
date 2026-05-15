@@ -1,0 +1,20 @@
+benchmark:
+  family: miniF2F
+  suite: miniF2F-test
+  split: test
+  subset: subset-v1-smoke
+  source_repo: https://github.com/facebookresearch/miniF2F
+  source_commit: e4f113090ad82d64f8ce064d2f55b613a9b6bded
+  pass_k: 1
+workspace: ../../benchmarks/minif2f
+defaults:
+  agent: none
+  command: repair
+  timeout_sec: 180
+  max_rounds: 1
+targets:
+  - id: mathd_numbertheory_3
+    file: MiniF2FBench/MathdNumbertheory3.lean
+    theorem: mathd_numbertheory_3
+    candidate_files:
+      - minif2f_mathd_numbertheory_3.body.lean

@@ -1,0 +1,14 @@
+{
+  "actions": [
+    {
+      "action_id": "action-001",
+      "kind": "propose_helper_lemma",
+      "helper": {
+        "helper_name": "helper_truth",
+        "helper_statement": "theorem helper_truth : True :=",
+        "proof_stub": "by\n  exact True.intro\n"
+      },
+      "rationale": "Prove the missing helper before trying to finish the parent theorem."
+    }
+  ]
+}
