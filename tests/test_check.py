@@ -14,6 +14,7 @@ from kan_prover.cli.commands import check
 from kan_prover.cli.main import main
 from kan_prover.engine.config import ToolPaths, bind_workspace, discover_tool_paths
 from kan_prover.engine.models import CheckResult, CheckStatus, DiagnosticClass, ExitCode, JsonValue
+from tests.workspaces import downstream_kan_workspace
 
 
 class TestCheckCommand:
@@ -23,9 +24,10 @@ class TestCheckCommand:
     def setup_class(cls) -> None:
         cls.tool_paths = discover_tool_paths()
         cls.demo_workspace = bind_workspace(cls.tool_paths.bundled_demo_runtime)
-        cls.repo_workspace = bind_workspace(Path("/Users/jcreinhold/Code/kan"))
+        cls.repo_root = downstream_kan_workspace(cls.tool_paths.root)
+        cls.repo_workspace = bind_workspace(cls.repo_root)
         cls.fixtures = cls.tool_paths.root / "tests" / "fixtures"
-        cls.repo_green_file = Path("/Users/jcreinhold/Code/kan/KanProofs/Algebra/Grades.lean")
+        cls.repo_green_file = cls.repo_root / "KanProofs" / "Algebra" / "Grades.lean"
 
     @pytest.mark.integration
     def test_clean_fixture(self) -> None:

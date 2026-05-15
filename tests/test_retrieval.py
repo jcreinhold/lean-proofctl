@@ -19,6 +19,7 @@ from kan_prover.engine.proofctl import ProbeLayer, ProbeResult, ProbeStatus
 from kan_prover.engine.retrieval import EmbeddingRetrievalConfig, collect_retrieval_explanation, collect_retrieval_hits
 from kan_prover.engine.semantic_cache import clear_memory_cache
 from kan_prover.engine.workspace_declaration_index import clear_workspace_index_memory_cache
+from tests.workspaces import downstream_kan_workspace
 
 
 class DeterministicEmbeddingRetriever:
@@ -52,7 +53,7 @@ class TestRetrieval:
     @classmethod
     def setup_class(cls) -> None:
         cls.tool_paths = discover_tool_paths()
-        cls.repo_root = cls.tool_paths.root.parent.parent
+        cls.repo_root = downstream_kan_workspace(cls.tool_paths.root)
 
     def test_retrieval_surfaces_same_file_and_same_namespace(self) -> None:
         fixture = (Path(__file__).resolve().parent / "fixtures" / "retrieval_namespace.lean").read_text(

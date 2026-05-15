@@ -14,6 +14,7 @@ from kan_prover.cli.main import _render_show_run_report
 from kan_prover.engine import bench as bench_engine
 from kan_prover.engine.config import ToolPaths, bind_workspace, discover_tool_paths
 from kan_prover.engine.models import BatchStatus, InspectionStatus, JsonValue, ReplayMode
+from tests.workspaces import downstream_kan_workspace
 
 GOOD_BODY = """by
   exact True.intro
@@ -75,7 +76,7 @@ class TestInspectionCommand:
         cls.tool_paths = discover_tool_paths()
         cls.demo_workspace = bind_workspace(cls.tool_paths.bundled_demo_runtime)
         cls.fixtures = cls.tool_paths.root / "tests" / "fixtures"
-        cls.repo_root = cls.tool_paths.root.parent.parent
+        cls.repo_root = downstream_kan_workspace(cls.tool_paths.root)
         cls.repo_mutual_target = cls.repo_root / "KanProofs" / "Structural" / "TypedSubstitution.lean"
 
     @pytest.mark.integration

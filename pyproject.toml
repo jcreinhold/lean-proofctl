@@ -35,7 +35,7 @@ docstring-code-format = true
 
 [tool.ty.environment]
 python-version = "3.14"
-root = ["./src", "./tests"]
+root = [".", "./src"]
 
 [tool.ty.src]
 include = ["src", "tests"]

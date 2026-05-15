@@ -10,6 +10,7 @@ from pathlib import Path
 import pytest
 
 from kan_prover.engine.config import ToolPaths, WorkspaceBinding, bind_workspace, discover_tool_paths
+from tests.workspaces import downstream_kan_workspace
 
 type FixturePathReader = Callable[[str], Path]
 type FixtureTextReader = Callable[[str], str]
@@ -32,7 +33,7 @@ def kan_prover_root(tool_paths: ToolPaths) -> Path:
 
 @pytest.fixture(scope="session")
 def repo_root(tool_paths: ToolPaths) -> Path:
-    return tool_paths.root.parent.parent
+    return downstream_kan_workspace(tool_paths.root)
 
 
 @pytest.fixture(scope="session")

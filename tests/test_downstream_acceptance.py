@@ -61,6 +61,7 @@ from kan_prover.engine.proofctl import (
     imports_and_namespace,
     theorem_span,
 )
+from tests.workspaces import downstream_kan_workspace
 
 pytestmark = [pytest.mark.integration, pytest.mark.slow, pytest.mark.acceptance]
 
@@ -71,7 +72,7 @@ class TestDownstreamAcceptance:
     @classmethod
     def setup_class(cls) -> None:
         cls.tool_paths = discover_tool_paths()
-        cls.repo_root = cls.tool_paths.root.parent.parent
+        cls.repo_root = downstream_kan_workspace(cls.tool_paths.root)
         cls.acceptance_dir = cls.tool_paths.root / "tests" / "acceptance"
         cls.sample_workspace_fixture = cls.acceptance_dir / "sample_workspace"
         cls.repo_target = cls.repo_root / "KanProofs" / "Algebra" / "ControlFlowGrades.lean"

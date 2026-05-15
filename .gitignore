@@ -2,6 +2,8 @@
 /.pytest_cache/
 /.cache/
 /.ruff_cache/
+__pycache__/
+/artifacts/
 /.ty/
 /__pycache__/
 /build/

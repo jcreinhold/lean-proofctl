@@ -72,6 +72,7 @@ from kan_prover.engine.source_probing import (
     theorem_span_from_source,
 )
 from kan_prover.engine.theorem_locator import locate_theorem_span_from_probe, locate_theorem_span_in_file
+from tests.workspaces import downstream_kan_workspace
 
 GOOD_BODY = """by
   exact True.intro
@@ -87,7 +88,7 @@ class TestProofctl:
     @classmethod
     def setup_class(cls) -> None:
         cls.tool_paths = discover_tool_paths()
-        cls.repo_root = cls.tool_paths.root.parent.parent
+        cls.repo_root = downstream_kan_workspace(cls.tool_paths.root)
         cls.runtime_workspace_root = cls.tool_paths.root / "lean-runtime"
         cls.repo_target = cls.repo_root / "KanProofs" / "Algebra" / "ControlFlowGrades.lean"
         cls.repo_prop_target = cls.repo_root / "KanProofs" / "Structural" / "Substitution" / "ValueSubstitution.lean"
@@ -1127,6 +1128,8 @@ theorem smoke : True := by
         assert result.message is not None
 
     def test_locator_uses_workspace_target_contract(self) -> None:
+        if not self.repo_target.is_file():
+            pytest.skip()
         source = self.repo_target.read_text(encoding="utf-8")
         span = locate_theorem_span_in_file(
             target_file=self.repo_target,
@@ -1138,6 +1141,8 @@ theorem smoke : True := by
         assert span.body_start > span.declaration_start
 
     def test_private_mutual_patch_rewrites_only_target_body(self) -> None:
+        if not self.repo_mutual_target.is_file():
+            pytest.skip()
         source = self.repo_mutual_target.read_text(encoding="utf-8")
         span = locate_theorem_span_in_file(
             target_file=self.repo_mutual_target,
@@ -1611,6 +1616,7 @@ end B
         assert "editable body" in stderr_text
         assert "detail: Lean did not expose a safe-edit boundary or proof-state data" in stderr_text
 
+    @pytest.mark.integration
     def test_retrieve_cli_json_surfaces_ranked_hits_and_score_rationale(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_root = Path(temp_dir)
@@ -1654,6 +1660,7 @@ end B
             assert "kan-prover retrieve ok" in stderr.getvalue()
             assert "file_state_check=skipped" in stderr.getvalue()
 
+    @pytest.mark.integration
     def test_retrieve_cli_json_explicit_file_state_verification_reports_ran(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_root = Path(temp_dir)
@@ -1691,6 +1698,7 @@ end B
             assert file_state_check["requested"] is True
             assert "file_state_check=ran" in stderr.getvalue()
 
+    @pytest.mark.integration
     def test_retrieve_cli_json_surfaces_embedding_score_component_when_enabled(self) -> None:
         class DeterministicCliEmbeddingRetriever:
             def provider_name(self) -> str:
@@ -1754,6 +1762,7 @@ end B
             )
             assert "kan-prover retrieve ok" in stderr.getvalue()
 
+    @pytest.mark.integration
     def test_repair_cli_json_reports_required_semantic_probe_failure_for_proof_state_execution_failure(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_root = Path(temp_dir)
@@ -1807,6 +1816,7 @@ end B
             assert "semantic `proof-state` probe data" in payload["message"]
             assert "semantic `proof-state` probe data" in stderr.getvalue()
 
+    @pytest.mark.integration
     def test_repair_cli_json_reports_backend_failure_separately_from_semantic_probe_failure(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_root = Path(temp_dir)
@@ -1858,6 +1868,7 @@ end B
             assert "cause: `codex` returned `unavailable`" in stderr_text
             assert "next step:" in stderr_text
 
+    @pytest.mark.integration
     def test_repair_cli_plain_reports_backend_failure_with_remediation(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_root = Path(temp_dir)
@@ -2283,6 +2294,7 @@ end B
         for name in ["lakefile.toml", "lake-manifest.json", "lean-toolchain", "KanRuntime.lean"]:
             (workspace_root / name).symlink_to(demo_root / name)
         (workspace_root / ".lake").symlink_to(demo_root / ".lake", target_is_directory=True)
+        (workspace_root / "Tools").symlink_to(demo_root / "Tools", target_is_directory=True)
         (workspace_root / "Problems").mkdir(parents=True, exist_ok=True)
         return workspace_root
 
