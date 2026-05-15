@@ -10,9 +10,9 @@ from unittest.mock import patch
 
 import pytest
 
-from kan_prover.cli.commands import prove
-from kan_prover.engine.config import ToolPaths, WorkspaceBinding, bind_workspace, discover_tool_paths
-from kan_prover.engine.models import (
+from lean_proofctl.cli.commands import prove
+from lean_proofctl.engine.config import ToolPaths, WorkspaceBinding, bind_workspace, discover_tool_paths
+from lean_proofctl.engine.models import (
     AgentRequest,
     AgentResponse,
     BackendInvocation,
@@ -20,7 +20,7 @@ from kan_prover.engine.models import (
     PatchCandidate,
     ProveStatus,
 )
-from kan_prover.engine.prove import ProveOptions, run_prove
+from lean_proofctl.engine.prove import ProveOptions, run_prove
 
 GOOD_BODY = """by
   exact True.intro
@@ -92,7 +92,7 @@ class StubProveBackend:
 
 
 class TestProve:
-    """Deterministic coverage for `kan-prover prove`."""
+    """Deterministic coverage for `proofctl prove`."""
 
     @classmethod
     def setup_class(cls) -> None:
@@ -143,7 +143,7 @@ class TestProve:
                 jsonl=False,
             )
             with patch(
-                "kan_prover.cli.commands.prove.discover_tool_paths",
+                "lean_proofctl.cli.commands.prove.discover_tool_paths",
                 return_value=self._temp_paths(temp_artifacts),
             ):
                 result, exit_code = prove.run_command(args)
@@ -217,7 +217,7 @@ class TestProve:
                 jsonl=False,
             )
             with patch(
-                "kan_prover.cli.commands.prove.discover_tool_paths",
+                "lean_proofctl.cli.commands.prove.discover_tool_paths",
                 return_value=self._temp_paths(temp_artifacts),
             ):
                 result, exit_code = prove.run_command(args)
@@ -226,7 +226,7 @@ class TestProve:
             assert result.status == ProveStatus.VERIFIED
             assert len(result.helpers) == 1
             assert result.helpers[0].status.value == "verified"
-            assert all(helper.module_name.startswith("KanProverGenerated.Helpers.") for helper in result.helpers)
+            assert all(helper.module_name.startswith("ProofctlGenerated.Helpers.") for helper in result.helpers)
             assert result.helpers[0].consumer_theorem_states == [result.graph.verified_node_id]
             helper_node = next(node for node in result.nodes if node.node_kind == "helper-obligation")
             verified_node = next(node for node in result.nodes if node.node_id == result.graph.verified_node_id)
@@ -294,7 +294,7 @@ class TestProve:
                 jsonl=False,
             )
             with patch(
-                "kan_prover.cli.commands.prove.discover_tool_paths",
+                "lean_proofctl.cli.commands.prove.discover_tool_paths",
                 return_value=self._temp_paths(temp_artifacts),
             ):
                 result, exit_code = prove.run_command(args)
@@ -342,7 +342,7 @@ class TestProve:
                 jsonl=False,
             )
             with patch(
-                "kan_prover.cli.commands.prove.discover_tool_paths",
+                "lean_proofctl.cli.commands.prove.discover_tool_paths",
                 return_value=self._temp_paths(temp_artifacts),
             ):
                 result, exit_code = prove.run_command(args)
@@ -449,7 +449,9 @@ class TestProve:
             target_file = workspace_root / "DownstreamSample" / "Green.lean"
             backend = StubProveBackend(responses={})
 
-            with patch("kan_prover.engine.session.LiveSemanticSession", side_effect=AssertionError("unexpected live")):
+            with patch(
+                "lean_proofctl.engine.session.LiveSemanticSession", side_effect=AssertionError("unexpected live")
+            ):
                 result, exit_code = run_prove(
                     tool_paths=self._temp_paths(temp_artifacts),
                     workspace=bind_workspace(workspace_root),

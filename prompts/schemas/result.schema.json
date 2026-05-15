@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://kan-prover.local/schemas/backend-result-v1.json",
+  "$id": "https://lean-proofctl.local/schemas/backend-result-v1.json",
   "title": "StrictBackendResultV1",
   "type": "object",
   "additionalProperties": false,

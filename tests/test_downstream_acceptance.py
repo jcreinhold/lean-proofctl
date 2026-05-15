@@ -1,4 +1,4 @@
-"""Real downstream acceptance coverage for workspace-aware `kan-prover`."""
+"""Real downstream acceptance coverage for workspace-aware `proofctl`."""
 
 import argparse
 import json
@@ -11,7 +11,7 @@ from unittest.mock import patch
 
 import pytest
 
-from kan_prover.cli.commands import (
+from lean_proofctl.cli.commands import (
     apply,
     bench,
     check,
@@ -26,8 +26,8 @@ from kan_prover.cli.commands import (
     show,
     trace,
 )
-from kan_prover.engine.config import ToolPaths, discover_tool_paths
-from kan_prover.engine.models import (
+from lean_proofctl.engine.config import ToolPaths, discover_tool_paths
+from lean_proofctl.engine.models import (
     ApplyResult,
     ApplyStatus,
     BatchStatus,
@@ -55,7 +55,7 @@ from kan_prover.engine.models import (
     ShowSessionResult,
     TraceResult,
 )
-from kan_prover.engine.proofctl import (
+from lean_proofctl.engine.proofctl import (
     ProbeStatus,
     UnsupportedTargetError,
     imports_and_namespace,
@@ -215,7 +215,7 @@ class TestDownstreamAcceptance:
             target_file = workspace_root / "DownstreamSample" / "Green.lean"
 
             with patch(
-                "kan_prover.engine.retrieval._build_embedding_retriever",
+                "lean_proofctl.engine.retrieval._build_embedding_retriever",
                 return_value=DeterministicAcceptanceEmbeddingRetriever(),
             ):
                 retrieve_result, retrieve_exit = self._run_retrieve(
@@ -365,7 +365,7 @@ class TestDownstreamAcceptance:
                 json=False,
                 jsonl=False,
             )
-            with patch("kan_prover.cli.commands.prove.discover_tool_paths", return_value=temp_paths):
+            with patch("lean_proofctl.cli.commands.prove.discover_tool_paths", return_value=temp_paths):
                 result, exit_code = prove.run_command(args)
             assert exit_code == 0
             assert result.status == ProveStatus.VERIFIED
@@ -693,7 +693,7 @@ class TestDownstreamAcceptance:
             assert prove_result.status == ProveStatus.VERIFIED
             assert prove_result.helpers
             assert prove_result.helpers[-1].status.value == "verified"
-            assert "KanProverGenerated.Helpers." in prove_result.helpers[-1].module_name
+            assert "ProofctlGenerated.Helpers." in prove_result.helpers[-1].module_name
 
     def test_sample_workspace_resume_acceptance_path(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -996,7 +996,7 @@ class TestDownstreamAcceptance:
             json=False,
             jsonl=False,
         )
-        with patch("kan_prover.cli.commands.check.discover_tool_paths", return_value=temp_paths):
+        with patch("lean_proofctl.cli.commands.check.discover_tool_paths", return_value=temp_paths):
             return check.run_command(args)
 
     def _run_repair(
@@ -1020,7 +1020,7 @@ class TestDownstreamAcceptance:
             timeout_seconds=timeout_seconds,
             apply=False,
         )
-        with patch("kan_prover.cli.commands.repair.discover_tool_paths", return_value=temp_paths):
+        with patch("lean_proofctl.cli.commands.repair.discover_tool_paths", return_value=temp_paths):
             return repair.run_command(args)
 
     def _run_inspect(
@@ -1044,7 +1044,7 @@ class TestDownstreamAcceptance:
             json=False,
             jsonl=False,
         )
-        with patch("kan_prover.cli.commands.inspect.discover_tool_paths", return_value=temp_paths):
+        with patch("lean_proofctl.cli.commands.inspect.discover_tool_paths", return_value=temp_paths):
             return inspect.run_command(args)
 
     def _run_plan(
@@ -1067,7 +1067,7 @@ class TestDownstreamAcceptance:
             json=False,
             jsonl=False,
         )
-        with patch("kan_prover.cli.commands.plan.discover_tool_paths", return_value=temp_paths):
+        with patch("lean_proofctl.cli.commands.plan.discover_tool_paths", return_value=temp_paths):
             return plan.run_command(args)
 
     def _run_retrieve(
@@ -1098,17 +1098,17 @@ class TestDownstreamAcceptance:
             json=False,
             jsonl=False,
         )
-        with patch("kan_prover.cli.commands.retrieve.discover_tool_paths", return_value=temp_paths):
+        with patch("lean_proofctl.cli.commands.retrieve.discover_tool_paths", return_value=temp_paths):
             return retrieve.run_command(args)
 
     def _run_trace(self, *, temp_paths: ToolPaths, source_run_id: str) -> tuple[TraceResult, int]:
         args = argparse.Namespace(run_id=source_run_id)
-        with patch("kan_prover.cli.commands.trace.discover_tool_paths", return_value=temp_paths):
+        with patch("lean_proofctl.cli.commands.trace.discover_tool_paths", return_value=temp_paths):
             return trace.run_command(args)
 
     def _run_show_run(self, *, temp_paths: ToolPaths, source_run_id: str) -> tuple[ShowRunResult, int]:
         args = argparse.Namespace(run_id=source_run_id, attempt=None)
-        with patch("kan_prover.cli.commands.show.discover_tool_paths", return_value=temp_paths):
+        with patch("lean_proofctl.cli.commands.show.discover_tool_paths", return_value=temp_paths):
             return show.run_show_run(args)
 
     def _run_show_session(
@@ -1119,7 +1119,7 @@ class TestDownstreamAcceptance:
         node_index: int | None = None,
     ) -> tuple[ShowSessionResult, int]:
         args = argparse.Namespace(session_id=source_session_id, node_id=None, node_index=node_index)
-        with patch("kan_prover.cli.commands.show.discover_tool_paths", return_value=temp_paths):
+        with patch("lean_proofctl.cli.commands.show.discover_tool_paths", return_value=temp_paths):
             return show.run_show_session(args)
 
     def _run_replay(self, *, temp_paths: ToolPaths, source_run_id: str) -> tuple[ReplayResult, int]:
@@ -1131,7 +1131,7 @@ class TestDownstreamAcceptance:
             reuse_agent_output=False,
             requery_agent=False,
         )
-        with patch("kan_prover.cli.commands.replay.discover_tool_paths", return_value=temp_paths):
+        with patch("lean_proofctl.cli.commands.replay.discover_tool_paths", return_value=temp_paths):
             return replay.run_command(args)
 
     def _run_prove(
@@ -1161,7 +1161,7 @@ class TestDownstreamAcceptance:
             json=False,
             jsonl=False,
         )
-        with patch("kan_prover.cli.commands.prove.discover_tool_paths", return_value=temp_paths):
+        with patch("lean_proofctl.cli.commands.prove.discover_tool_paths", return_value=temp_paths):
             return prove.run_command(args)
 
     def _run_resume(
@@ -1187,7 +1187,7 @@ class TestDownstreamAcceptance:
             timeout_seconds=timeout_seconds,
             max_nodes=max_nodes,
         )
-        with patch("kan_prover.cli.commands.resume.discover_tool_paths", return_value=temp_paths):
+        with patch("lean_proofctl.cli.commands.resume.discover_tool_paths", return_value=temp_paths):
             return resume.run_command(args)
 
     def _run_apply(
@@ -1204,7 +1204,7 @@ class TestDownstreamAcceptance:
             node_id=node_id,
             graph_index=None,
         )
-        with patch("kan_prover.cli.commands.apply.discover_tool_paths", return_value=temp_paths):
+        with patch("lean_proofctl.cli.commands.apply.discover_tool_paths", return_value=temp_paths):
             return apply.run_command(args)
 
     def _run_session_start(
@@ -1223,7 +1223,7 @@ class TestDownstreamAcceptance:
             source_run_id=None,
             timeout_seconds=timeout_seconds,
         )
-        with patch("kan_prover.cli.commands.session.discover_tool_paths", return_value=temp_paths):
+        with patch("lean_proofctl.cli.commands.session.discover_tool_paths", return_value=temp_paths):
             return session.run_start(args)
 
     def _run_session_step(
@@ -1239,7 +1239,7 @@ class TestDownstreamAcceptance:
             body_file=str(body_file),
             timeout_seconds=timeout_seconds,
         )
-        with patch("kan_prover.cli.commands.session.discover_tool_paths", return_value=temp_paths):
+        with patch("lean_proofctl.cli.commands.session.discover_tool_paths", return_value=temp_paths):
             return session.run_step(args)
 
     def _run_session_goals(
@@ -1250,7 +1250,7 @@ class TestDownstreamAcceptance:
         timeout_seconds: float,
     ) -> tuple[SessionActionResult, int]:
         args = argparse.Namespace(session_id=session_id, timeout_seconds=timeout_seconds)
-        with patch("kan_prover.cli.commands.session.discover_tool_paths", return_value=temp_paths):
+        with patch("lean_proofctl.cli.commands.session.discover_tool_paths", return_value=temp_paths):
             return session.run_goals(args)
 
     def _run_session_checkpoint(
@@ -1261,7 +1261,7 @@ class TestDownstreamAcceptance:
         label: str,
     ) -> tuple[SessionActionResult, int]:
         args = argparse.Namespace(session_id=session_id, label=label)
-        with patch("kan_prover.cli.commands.session.discover_tool_paths", return_value=temp_paths):
+        with patch("lean_proofctl.cli.commands.session.discover_tool_paths", return_value=temp_paths):
             return session.run_checkpoint(args)
 
     def _run_session_finish(
@@ -1272,7 +1272,7 @@ class TestDownstreamAcceptance:
         timeout_seconds: float,
     ) -> tuple[SessionActionResult, int]:
         args = argparse.Namespace(session_id=session_id, timeout_seconds=timeout_seconds)
-        with patch("kan_prover.cli.commands.session.discover_tool_paths", return_value=temp_paths):
+        with patch("lean_proofctl.cli.commands.session.discover_tool_paths", return_value=temp_paths):
             return session.run_finish(args)
 
     def _run_bench(
@@ -1288,7 +1288,7 @@ class TestDownstreamAcceptance:
             workspace=None if workspace_root is None else str(workspace_root),
             output=str(output_path),
         )
-        with patch("kan_prover.cli.commands.bench.discover_tool_paths", return_value=temp_paths):
+        with patch("lean_proofctl.cli.commands.bench.discover_tool_paths", return_value=temp_paths):
             return bench.run_command(args)
 
     def _temp_paths(self, temp_artifacts: Path) -> ToolPaths:

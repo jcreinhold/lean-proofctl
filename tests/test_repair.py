@@ -9,9 +9,9 @@ from unittest.mock import patch
 
 import pytest
 
-from kan_prover.cli.commands import decompose, repair, solve
-from kan_prover.engine.config import ToolPaths, WorkspaceBinding, bind_workspace, discover_tool_paths
-from kan_prover.engine.models import (
+from lean_proofctl.cli.commands import decompose, repair, solve
+from lean_proofctl.engine.config import ToolPaths, WorkspaceBinding, bind_workspace, discover_tool_paths
+from lean_proofctl.engine.models import (
     AgentRequest,
     AgentResponse,
     BackendInvocation,
@@ -20,8 +20,8 @@ from kan_prover.engine.models import (
     PatchCandidate,
     SandboxStrategy,
 )
-from kan_prover.engine.source_probing import theorem_span_from_source
-from kan_prover.engine.theorem_locator import TheoremLocatorError, locate_theorem_span_from_probe
+from lean_proofctl.engine.source_probing import theorem_span_from_source
+from lean_proofctl.engine.theorem_locator import TheoremLocatorError, locate_theorem_span_from_probe
 
 GOOD_BODY = """by
   exact True.intro
@@ -146,7 +146,7 @@ class TestRepairLoop:
                 apply=False,
             )
             with patch(
-                "kan_prover.cli.commands.repair.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                "lean_proofctl.cli.commands.repair.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
             ):
                 result, exit_code = repair.run_command(args)
             assert exit_code == 0
@@ -154,7 +154,7 @@ class TestRepairLoop:
             assert result.verified_attempt == 1
             assert not result.applied
             assert result.target_module_path == "Problems/repair_target.lean"
-            assert result.helper_module_root == "KanProverGenerated.Helpers"
+            assert result.helper_module_root == "ProofctlGenerated.Helpers"
             assert target_file.read_text(encoding="utf-8") == original_text
             assert result.sandbox.strategy == SandboxStrategy.COPIED_WORKSPACE
             attempt_dir = Path(result.work_dir) / "attempt-001"
@@ -167,7 +167,7 @@ class TestRepairLoop:
             assert (attempt_dir / "backend" / "command.json").is_file()
             assert Path(result.attempts[0].sandbox_file).is_file()
             assert result.attempts[0].target_module_path == "Problems/repair_target.lean"
-            assert result.attempts[0].helper_module_root == "KanProverGenerated.Helpers"
+            assert result.attempts[0].helper_module_root == "ProofctlGenerated.Helpers"
             assert Path(result.attempts[0].sandbox_file).is_relative_to(Path(result.sandbox.sandbox_workspace_root))
 
     def test_repair_request_records_strategy_and_selected_failure_without_breaking_agent_none(self) -> None:
@@ -184,7 +184,7 @@ class TestRepairLoop:
                 apply=False,
             )
             with patch(
-                "kan_prover.cli.commands.repair.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                "lean_proofctl.cli.commands.repair.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
             ):
                 result, exit_code = repair.run_command(args)
             assert exit_code == 0
@@ -223,7 +223,7 @@ theorem dup : True := by
                 apply=True,
             )
             with patch(
-                "kan_prover.cli.commands.repair.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                "lean_proofctl.cli.commands.repair.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
             ):
                 result, exit_code = repair.run_command(args)
             assert exit_code == 1
@@ -254,9 +254,10 @@ theorem dup : True := by
             )
             with (
                 patch(
-                    "kan_prover.cli.commands.repair.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                    "lean_proofctl.cli.commands.repair.discover_tool_paths",
+                    return_value=self._temp_paths(temp_artifacts),
                 ),
-                patch("kan_prover.cli.commands.repair.create_backend", return_value=backend),
+                patch("lean_proofctl.cli.commands.repair.create_backend", return_value=backend),
             ):
                 result, exit_code = repair.run_command(args)
             assert exit_code == 1
@@ -304,9 +305,10 @@ theorem dup : True := by
             )
             with (
                 patch(
-                    "kan_prover.cli.commands.repair.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                    "lean_proofctl.cli.commands.repair.discover_tool_paths",
+                    return_value=self._temp_paths(temp_artifacts),
                 ),
-                patch("kan_prover.cli.commands.repair.create_backend", return_value=backend),
+                patch("lean_proofctl.cli.commands.repair.create_backend", return_value=backend),
             ):
                 result, exit_code = repair.run_command(args)
             assert exit_code == 1
@@ -349,9 +351,10 @@ theorem dup : True := by
             )
             with (
                 patch(
-                    "kan_prover.cli.commands.repair.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                    "lean_proofctl.cli.commands.repair.discover_tool_paths",
+                    return_value=self._temp_paths(temp_artifacts),
                 ),
-                patch("kan_prover.cli.commands.repair.create_backend", return_value=backend),
+                patch("lean_proofctl.cli.commands.repair.create_backend", return_value=backend),
             ):
                 result, exit_code = repair.run_command(args)
             assert exit_code == 0
@@ -377,7 +380,7 @@ theorem dup : True := by
                 apply=True,
             )
             with patch(
-                "kan_prover.cli.commands.repair.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                "lean_proofctl.cli.commands.repair.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
             ):
                 result, exit_code = repair.run_command(args)
             assert exit_code == 0
@@ -400,7 +403,7 @@ theorem dup : True := by
                 apply=False,
             )
             paths = self._temp_paths(temp_artifacts)
-            with patch("kan_prover.cli.commands.repair.discover_tool_paths", return_value=paths):
+            with patch("lean_proofctl.cli.commands.repair.discover_tool_paths", return_value=paths):
                 first_result, first_exit = repair.run_command(first_args)
             assert first_exit == 0
             replay_candidate = Path(first_result.work_dir) / "attempt-001" / "candidate.json"
@@ -411,7 +414,7 @@ theorem dup : True := by
                 replay_attempts=[replay_candidate],
                 apply=False,
             )
-            with patch("kan_prover.cli.commands.repair.discover_tool_paths", return_value=paths):
+            with patch("lean_proofctl.cli.commands.repair.discover_tool_paths", return_value=paths):
                 replay_result, replay_exit = repair.run_command(replay_args)
             assert replay_exit == 0
             assert replay_result.status == LoopStatus.VERIFIED
@@ -433,7 +436,7 @@ theorem dup : True := by
                 apply=False,
             )
             with patch(
-                "kan_prover.cli.commands.solve.discover_tool_paths",
+                "lean_proofctl.cli.commands.solve.discover_tool_paths",
                 return_value=self._temp_paths(temp_artifacts),
             ):
                 result, exit_code = solve.run_command(args)
@@ -464,7 +467,7 @@ theorem dup : True := by
                 timeout_seconds=60.0,
             )
             with patch(
-                "kan_prover.cli.commands.decompose.discover_tool_paths",
+                "lean_proofctl.cli.commands.decompose.discover_tool_paths",
                 return_value=self._temp_paths(temp_artifacts),
             ):
                 result, exit_code = decompose.run_command(args)
@@ -472,7 +475,7 @@ theorem dup : True := by
             assert result.status == LoopStatus.VERIFIED
             assert len(result.steps) == 1
             assert result.target_module_path == "Problems/helper_target.lean"
-            assert result.helper_module_root == "KanProverGenerated.Helpers"
+            assert result.helper_module_root == "ProofctlGenerated.Helpers"
             assert result.steps[0].helper_name == "helper_truth"
 
     def test_helper_sidecar_file_is_created_under_generated_helpers(self) -> None:
@@ -492,14 +495,14 @@ theorem dup : True := by
                 apply=False,
             )
             paths = self._temp_paths(temp_artifacts)
-            with patch("kan_prover.cli.commands.solve.discover_tool_paths", return_value=paths):
+            with patch("lean_proofctl.cli.commands.solve.discover_tool_paths", return_value=paths):
                 result, exit_code = solve.run_command(args)
             assert exit_code == 0
             assert result.status == LoopStatus.VERIFIED
             assert len(result.proved_helpers) == 1
             helper_path = Path(result.proved_helpers[0].file_path)
             assert helper_path.is_file()
-            assert "KanProverGenerated/Helpers" in str(helper_path)
+            assert "ProofctlGenerated/Helpers" in str(helper_path)
             assert helper_path.is_relative_to(Path(result.sandbox.sandbox_workspace_root))
             assert Path(result.work_dir).parent.joinpath("decompose-001").is_dir()
 
@@ -520,7 +523,7 @@ theorem dup : True := by
                 max_attempts=1,
                 apply=False,
             )
-            with patch("kan_prover.cli.commands.solve.discover_tool_paths", return_value=paths):
+            with patch("lean_proofctl.cli.commands.solve.discover_tool_paths", return_value=paths):
                 first_result, first_exit = solve.run_command(first_args)
             assert first_exit == 0
             second_args = self._solve_args(
@@ -531,14 +534,14 @@ theorem dup : True := by
                 max_attempts=1,
                 apply=False,
             )
-            with patch("kan_prover.cli.commands.solve.discover_tool_paths", return_value=paths):
+            with patch("lean_proofctl.cli.commands.solve.discover_tool_paths", return_value=paths):
                 second_result, second_exit = solve.run_command(second_args)
             assert second_exit == 0
             assert second_result.status == LoopStatus.VERIFIED
             assert len(second_result.retrieval_hits) >= 1
             assert any(hit.source_kind.value == "proved-helper" for hit in second_result.retrieval_hits)
             assert not any(
-                "KanProverGenerated.Helpers" in attempt.verification.target_file for attempt in first_result.attempts
+                "ProofctlGenerated.Helpers" in attempt.verification.target_file for attempt in first_result.attempts
             )
 
     def test_failed_helpers_can_be_replaced_without_deleting_proved_ones(self) -> None:
@@ -560,7 +563,7 @@ theorem dup : True := by
                 max_attempts=1,
                 apply=False,
             )
-            with patch("kan_prover.cli.commands.solve.discover_tool_paths", return_value=paths):
+            with patch("lean_proofctl.cli.commands.solve.discover_tool_paths", return_value=paths):
                 _good_result, good_exit = solve.run_command(good_args)
             assert good_exit == 0
             failed_args = self._solve_args(
@@ -572,7 +575,7 @@ theorem dup : True := by
                 max_attempts=1,
                 apply=False,
             )
-            with patch("kan_prover.cli.commands.solve.discover_tool_paths", return_value=paths):
+            with patch("lean_proofctl.cli.commands.solve.discover_tool_paths", return_value=paths):
                 failed_result, failed_exit = solve.run_command(failed_args)
             assert failed_exit == 0
             assert failed_result.status == LoopStatus.VERIFIED
@@ -585,7 +588,7 @@ theorem dup : True := by
                 max_attempts=1,
                 apply=False,
             )
-            with patch("kan_prover.cli.commands.solve.discover_tool_paths", return_value=paths):
+            with patch("lean_proofctl.cli.commands.solve.discover_tool_paths", return_value=paths):
                 replacement_result, replacement_exit = solve.run_command(replacement_args)
             assert replacement_exit == 0
             helper_names = {
@@ -617,9 +620,9 @@ theorem dup : True := by
                 apply=False,
             )
             paths = self._temp_paths(temp_artifacts)
-            with patch("kan_prover.cli.commands.repair.discover_tool_paths", return_value=paths):
+            with patch("lean_proofctl.cli.commands.repair.discover_tool_paths", return_value=paths):
                 direct_result, direct_exit = repair.run_command(direct_args)
-            with patch("kan_prover.cli.commands.solve.discover_tool_paths", return_value=paths):
+            with patch("lean_proofctl.cli.commands.solve.discover_tool_paths", return_value=paths):
                 helper_result, helper_exit = solve.run_command(helper_args)
             assert direct_exit == 1
             assert direct_result.status == LoopStatus.FAILED
@@ -655,9 +658,9 @@ theorem dup : True := by
                 apply=False,
             )
             paths = self._temp_paths(temp_artifacts)
-            with patch("kan_prover.cli.commands.solve.discover_tool_paths", return_value=paths):
+            with patch("lean_proofctl.cli.commands.solve.discover_tool_paths", return_value=paths):
                 recursive_result, recursive_exit = solve.run_command(recursive_args)
-            with patch("kan_prover.cli.commands.solve.discover_tool_paths", return_value=paths):
+            with patch("lean_proofctl.cli.commands.solve.discover_tool_paths", return_value=paths):
                 single_level_result, single_level_exit = solve.run_command(single_level_args)
             assert recursive_exit == 0
             assert recursive_result.status == LoopStatus.VERIFIED
@@ -698,14 +701,14 @@ theorem dup : True := by
                 apply=True,
             )
             with patch(
-                "kan_prover.cli.commands.solve.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                "lean_proofctl.cli.commands.solve.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
             ):
                 result, exit_code = solve.run_command(args)
             assert exit_code == 0
             assert result.applied
             helper_file = (
                 workspace.root
-                / "KanProverGenerated"
+                / "ProofctlGenerated"
                 / "Helpers"
                 / "Problems"
                 / "HelperTarget"
@@ -714,7 +717,7 @@ theorem dup : True := by
             )
             assert helper_file.is_file()
             assert (
-                "import KanProverGenerated.Helpers.Problems.HelperTarget.HelperTarget.HelperTruth"
+                "import ProofctlGenerated.Helpers.Problems.HelperTarget.HelperTarget.HelperTruth"
                 in target_file.read_text(encoding="utf-8")
             )
             after = self._workspace_snapshot(workspace.root)
@@ -741,13 +744,13 @@ theorem dup : True := by
                 apply=False,
             )
             with patch(
-                "kan_prover.cli.commands.solve.discover_tool_paths",
+                "lean_proofctl.cli.commands.solve.discover_tool_paths",
                 return_value=self._temp_paths(temp_artifacts),
             ):
                 result, exit_code = solve.run_command(args)
             assert exit_code == 0
             sandbox_target = Path(result.attempts[0].sandbox_file)
-            assert "import KanProverGenerated.Helpers." in sandbox_target.read_text(encoding="utf-8")
+            assert "import ProofctlGenerated.Helpers." in sandbox_target.read_text(encoding="utf-8")
             assert Path(result.proved_helpers[0].file_path).is_relative_to(Path(result.sandbox.sandbox_workspace_root))
             assert str(self.tool_paths.bundled_demo_runtime) not in result.proved_helpers[0].file_path
 

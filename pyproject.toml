@@ -2,13 +2,15 @@
 authors = [{ name = "Jacob Reinhold", email = "5241441+jcreinhold@users.noreply.github.com" }]
 dependencies = ["PyYAML>=6,<7"]
 description = "Verifier-first proof search tooling with a Python orchestration layer."
-name = "kan-prover"
+license = "MIT OR Apache-2.0"
+license-files = ["LICENSE-MIT", "LICENSE-APACHE"]
+name = "lean-proofctl"
 readme = "README.md"
 requires-python = ">=3.14"
 version = "0.1.0"
 
 [project.scripts]
-kan-prover = "kan_prover.cli.main:main"
+proofctl = "lean_proofctl.cli.main:main"
 
 [dependency-groups]
 dev = ["pytest>=8,<9", "ruff", "ty"]

@@ -2,9 +2,9 @@
 
 from pathlib import Path
 
-from kan_prover.engine.diagnostics import normalize_diagnostic, timeout_diagnostic
-from kan_prover.engine.loop import _select_repair_strategy
-from kan_prover.engine.models import DiagnosticClass, RepairStrategy, Severity
+from lean_proofctl.engine.diagnostics import normalize_diagnostic, timeout_diagnostic
+from lean_proofctl.engine.loop import _select_repair_strategy
+from lean_proofctl.engine.models import DiagnosticClass, RepairStrategy, Severity
 
 
 class TestDiagnostics:

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://kan-prover.local/schemas/theorem-body-candidate-v1.json",
+  "$id": "https://lean-proofctl.local/schemas/theorem-body-candidate-v1.json",
   "title": "TheoremBodyCandidateV1",
   "type": "object",
   "additionalProperties": false,

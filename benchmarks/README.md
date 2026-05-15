@@ -1,4 +1,4 @@
-Standard benchmark fixtures for `kan-prover bench`.
+Standard benchmark fixtures for `proofctl bench`.
 
 These fixtures keep the benchmark surface reproducible and checked in. They do not claim full leaderboard coverage. Each
 suite here is a documented subset that is small enough to vendor and stable enough to reuse across later search work.
@@ -11,7 +11,7 @@ Current suites:
     `b391f48b645c5b6101ed89aca96230226d654b3e`.
 
 Both upstream sources are Apache 2.0 licensed. The checked-in Lean files keep the original theorem names and problem
-text where practical, but replace proofs with failing placeholders so `kan-prover` still has a real theorem target to
+text where practical, but replace proofs with failing placeholders so `proofctl` still has a real theorem target to
 repair or prove.
 
 Run the checked-in standard manifests with:

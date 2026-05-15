@@ -9,10 +9,10 @@ from unittest.mock import patch
 
 import pytest
 
-from kan_prover.cli.commands import plan
-from kan_prover.engine.config import ToolPaths, bind_workspace, discover_tool_paths
-from kan_prover.engine.inspection import run_plan
-from kan_prover.engine.models import (
+from lean_proofctl.cli.commands import plan
+from lean_proofctl.engine.config import ToolPaths, bind_workspace, discover_tool_paths
+from lean_proofctl.engine.inspection import run_plan
+from lean_proofctl.engine.models import (
     AgentRequest,
     AgentResponse,
     BackendInvocation,
@@ -51,7 +51,7 @@ class TestPlan:
                 jsonl=False,
             )
             with patch(
-                "kan_prover.cli.commands.plan.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                "lean_proofctl.cli.commands.plan.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
             ):
                 result, exit_code = plan.run_command(args)
             assert exit_code == 0

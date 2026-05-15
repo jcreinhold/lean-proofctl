@@ -15,12 +15,12 @@ from unittest.mock import patch
 
 import pytest
 
-from kan_prover.adapters.base import BackendCommandError
-from kan_prover.cli.commands import repair
-from kan_prover.cli.main import main
-from kan_prover.engine.config import ToolPaths, bind_workspace, discover_tool_paths
-from kan_prover.engine.inspection import build_inspection_state, run_inspect, run_retrieve
-from kan_prover.engine.lean_helpers import (
+from lean_proofctl.adapters.base import BackendCommandError
+from lean_proofctl.cli.commands import repair
+from lean_proofctl.cli.main import main
+from lean_proofctl.engine.config import ToolPaths, bind_workspace, discover_tool_paths
+from lean_proofctl.engine.inspection import build_inspection_state, run_inspect, run_retrieve
+from lean_proofctl.engine.lean_helpers import (
     LeanHelperCommand,
     LeanHelperErrorKind,
     LeanHelperRequest,
@@ -40,8 +40,8 @@ from kan_prover.engine.lean_helpers import (
     ProofctlWorkspaceDeclarationIndex,
     run_lean_helper,
 )
-from kan_prover.engine.patching import replace_theorem_body
-from kan_prover.engine.proofctl import (
+from lean_proofctl.engine.patching import replace_theorem_body
+from lean_proofctl.engine.proofctl import (
     ProbeLayer,
     ProbeResult,
     ProbeStatus,
@@ -63,15 +63,15 @@ from kan_prover.engine.proofctl import (
     semantic_context_bundle,
     theorem_span,
 )
-from kan_prover.engine.sandbox import create_sandbox_workspace
-from kan_prover.engine.semantic_cache import clear_memory_cache
-from kan_prover.engine.semantic_live import LiveSemanticSession
-from kan_prover.engine.semantic_runner import SemanticContextRequest
-from kan_prover.engine.source_probing import (
+from lean_proofctl.engine.sandbox import create_sandbox_workspace
+from lean_proofctl.engine.semantic_cache import clear_memory_cache
+from lean_proofctl.engine.semantic_live import LiveSemanticSession
+from lean_proofctl.engine.semantic_runner import SemanticContextRequest
+from lean_proofctl.engine.source_probing import (
     imports_and_namespace_from_source,
     theorem_span_from_source,
 )
-from kan_prover.engine.theorem_locator import locate_theorem_span_from_probe, locate_theorem_span_in_file
+from lean_proofctl.engine.theorem_locator import locate_theorem_span_from_probe, locate_theorem_span_in_file
 from tests.workspaces import downstream_kan_workspace
 
 GOOD_BODY = """by
@@ -149,11 +149,11 @@ class TestProofctl:
         )
         with (
             patch(
-                "kan_prover.engine.lean_helpers.ensure_semantic_probe_executable",
+                "lean_proofctl.engine.lean_helpers.ensure_semantic_probe_executable",
                 return_value=self.tool_paths.bundled_demo_runtime / ".lake" / "build" / "bin" / "SemanticProbe",
             ),
             patch(
-                "kan_prover.engine.lean_helpers.subprocess.run",
+                "lean_proofctl.engine.lean_helpers.subprocess.run",
                 return_value=subprocess.CompletedProcess(
                     args=[],
                     returncode=0,
@@ -183,11 +183,11 @@ class TestProofctl:
         )
         with (
             patch(
-                "kan_prover.engine.lean_helpers.ensure_semantic_probe_executable",
+                "lean_proofctl.engine.lean_helpers.ensure_semantic_probe_executable",
                 return_value=self.tool_paths.bundled_demo_runtime / ".lake" / "build" / "bin" / "SemanticProbe",
             ),
             patch(
-                "kan_prover.engine.lean_helpers.subprocess.run",
+                "lean_proofctl.engine.lean_helpers.subprocess.run",
                 return_value=subprocess.CompletedProcess(
                     args=[],
                     returncode=0,
@@ -251,11 +251,11 @@ class TestProofctl:
         )
         with (
             patch(
-                "kan_prover.engine.lean_helpers.ensure_semantic_probe_executable",
+                "lean_proofctl.engine.lean_helpers.ensure_semantic_probe_executable",
                 return_value=self.tool_paths.bundled_demo_runtime / ".lake" / "build" / "bin" / "SemanticProbe",
             ),
             patch(
-                "kan_prover.engine.lean_helpers.subprocess.run",
+                "lean_proofctl.engine.lean_helpers.subprocess.run",
                 return_value=subprocess.CompletedProcess(
                     args=[],
                     returncode=0,
@@ -312,11 +312,11 @@ class TestProofctl:
         )
         with (
             patch(
-                "kan_prover.engine.lean_helpers.ensure_semantic_probe_executable",
+                "lean_proofctl.engine.lean_helpers.ensure_semantic_probe_executable",
                 return_value=self.tool_paths.bundled_demo_runtime / ".lake" / "build" / "bin" / "SemanticProbe",
             ),
             patch(
-                "kan_prover.engine.lean_helpers.subprocess.run",
+                "lean_proofctl.engine.lean_helpers.subprocess.run",
                 return_value=subprocess.CompletedProcess(
                     args=[],
                     returncode=0,
@@ -362,11 +362,11 @@ class TestProofctl:
         )
         with (
             patch(
-                "kan_prover.engine.lean_helpers.ensure_semantic_probe_executable",
+                "lean_proofctl.engine.lean_helpers.ensure_semantic_probe_executable",
                 return_value=self.tool_paths.bundled_demo_runtime / ".lake" / "build" / "bin" / "SemanticProbe",
             ),
             patch(
-                "kan_prover.engine.lean_helpers.subprocess.run",
+                "lean_proofctl.engine.lean_helpers.subprocess.run",
                 return_value=subprocess.CompletedProcess(
                     args=[],
                     returncode=0,
@@ -417,11 +417,11 @@ class TestProofctl:
         )
         with (
             patch(
-                "kan_prover.engine.lean_helpers.ensure_semantic_probe_executable",
+                "lean_proofctl.engine.lean_helpers.ensure_semantic_probe_executable",
                 return_value=self.tool_paths.bundled_demo_runtime / ".lake" / "build" / "bin" / "SemanticProbe",
             ),
             patch(
-                "kan_prover.engine.lean_helpers.subprocess.run",
+                "lean_proofctl.engine.lean_helpers.subprocess.run",
                 return_value=subprocess.CompletedProcess(
                     args=[],
                     returncode=0,
@@ -460,11 +460,11 @@ class TestProofctl:
         )
         with (
             patch(
-                "kan_prover.engine.lean_helpers.ensure_semantic_probe_executable",
+                "lean_proofctl.engine.lean_helpers.ensure_semantic_probe_executable",
                 return_value=self.tool_paths.bundled_demo_runtime / ".lake" / "build" / "bin" / "SemanticProbe",
             ),
             patch(
-                "kan_prover.engine.lean_helpers.subprocess.run",
+                "lean_proofctl.engine.lean_helpers.subprocess.run",
                 return_value=subprocess.CompletedProcess(
                     args=[],
                     returncode=0,
@@ -528,11 +528,11 @@ class TestProofctl:
         )
         with (
             patch(
-                "kan_prover.engine.lean_helpers.ensure_semantic_probe_executable",
+                "lean_proofctl.engine.lean_helpers.ensure_semantic_probe_executable",
                 return_value=self.tool_paths.bundled_demo_runtime / ".lake" / "build" / "bin" / "SemanticProbe",
             ),
             patch(
-                "kan_prover.engine.lean_helpers.subprocess.run",
+                "lean_proofctl.engine.lean_helpers.subprocess.run",
                 return_value=subprocess.CompletedProcess(
                     args=[],
                     returncode=0,
@@ -559,11 +559,11 @@ class TestProofctl:
         )
         with (
             patch(
-                "kan_prover.engine.lean_helpers.ensure_semantic_probe_executable",
+                "lean_proofctl.engine.lean_helpers.ensure_semantic_probe_executable",
                 return_value=self.tool_paths.bundled_demo_runtime / ".lake" / "build" / "bin" / "SemanticProbe",
             ),
             patch(
-                "kan_prover.engine.lean_helpers.subprocess.run",
+                "lean_proofctl.engine.lean_helpers.subprocess.run",
                 return_value=subprocess.CompletedProcess(
                     args=[],
                     returncode=1,
@@ -597,10 +597,10 @@ class TestProofctl:
         )
         with (
             patch(
-                "kan_prover.engine.lean_helpers.ensure_semantic_probe_executable",
+                "lean_proofctl.engine.lean_helpers.ensure_semantic_probe_executable",
                 return_value=self.tool_paths.bundled_demo_runtime / ".lake" / "build" / "bin" / "SemanticProbe",
             ),
-            patch("kan_prover.engine.lean_helpers.subprocess.run") as subprocess_run,
+            patch("lean_proofctl.engine.lean_helpers.subprocess.run") as subprocess_run,
         ):
             subprocess_run.return_value = subprocess.CompletedProcess(
                 args=[],
@@ -621,11 +621,11 @@ class TestProofctl:
         request = self._helper_request(command=LeanHelperCommand.DECLARATION_TARGET)
         with (
             patch(
-                "kan_prover.engine.lean_helpers.ensure_semantic_probe_executable",
+                "lean_proofctl.engine.lean_helpers.ensure_semantic_probe_executable",
                 return_value=self.tool_paths.bundled_demo_runtime / ".lake" / "build" / "bin" / "SemanticProbe",
             ),
             patch(
-                "kan_prover.engine.lean_helpers.subprocess.run",
+                "lean_proofctl.engine.lean_helpers.subprocess.run",
                 return_value=subprocess.CompletedProcess(
                     args=[],
                     returncode=1,
@@ -642,7 +642,7 @@ class TestProofctl:
     def test_lean_helper_binding_reports_bootstrap_failures(self) -> None:
         request = self._helper_request(command=LeanHelperCommand.DECLARATION_TARGET)
         with patch(
-            "kan_prover.engine.lean_helpers.ensure_semantic_probe_executable",
+            "lean_proofctl.engine.lean_helpers.ensure_semantic_probe_executable",
             side_effect=OSError("build failed"),
         ):
             result = run_lean_helper(request)
@@ -677,11 +677,11 @@ class TestProofctl:
         )
         with (
             patch(
-                "kan_prover.engine.lean_helpers.ensure_semantic_probe_executable",
+                "lean_proofctl.engine.lean_helpers.ensure_semantic_probe_executable",
                 return_value=self.tool_paths.bundled_demo_runtime / ".lake" / "build" / "bin" / "SemanticProbe",
             ),
             patch(
-                "kan_prover.engine.lean_helpers.subprocess.run",
+                "lean_proofctl.engine.lean_helpers.subprocess.run",
                 return_value=subprocess.CompletedProcess(
                     args=[],
                     returncode=0,
@@ -883,13 +883,13 @@ class TestProofctl:
             result=bundle,
         )
         with (
-            patch("kan_prover.engine.proofctl.semantic_context_bundle", return_value=bundle_result) as bundle_call,
+            patch("lean_proofctl.engine.proofctl.semantic_context_bundle", return_value=bundle_result) as bundle_call,
             patch(
-                "kan_prover.engine.proofctl.declaration_target",
+                "lean_proofctl.engine.proofctl.declaration_target",
                 side_effect=AssertionError("from_workspace should not call declaration_target"),
             ),
             patch(
-                "kan_prover.engine.proofctl.proof_state",
+                "lean_proofctl.engine.proofctl.proof_state",
                 side_effect=AssertionError("from_workspace should not call proof_state"),
             ),
         ):
@@ -1181,7 +1181,7 @@ end B
             locate_theorem_span_from_probe(source=source, theorem_name="dup", probe=probe)
 
     def test_workspace_modules_do_not_carry_source_only_probe_surface(self) -> None:
-        engine_root = self.tool_paths.root / "src" / "kan_prover" / "engine"
+        engine_root = self.tool_paths.root / "src" / "lean_proofctl" / "engine"
         proofctl_tree = ast.parse((engine_root / "proofctl.py").read_text(encoding="utf-8"))
         source_probing_tree = ast.parse((engine_root / "source_probing.py").read_text(encoding="utf-8"))
         theorem_locator_tree = ast.parse((engine_root / "theorem_locator.py").read_text(encoding="utf-8"))
@@ -1206,7 +1206,7 @@ end B
             "inspection.py": inspection_tree,
         }.items():
             for node in ast.walk(tree):
-                if not isinstance(node, ast.ImportFrom) or node.module != "kan_prover.engine.proofctl":
+                if not isinstance(node, ast.ImportFrom) or node.module != "lean_proofctl.engine.proofctl":
                     continue
                 imported = {alias.name for alias in node.names}
                 assert not ({"theorem_span_from_source", "imports_and_namespace_from_source"} & imported), (
@@ -1233,7 +1233,7 @@ end B
                 apply=False,
             )
             with patch(
-                "kan_prover.cli.commands.repair.discover_tool_paths",
+                "lean_proofctl.cli.commands.repair.discover_tool_paths",
                 return_value=self._temp_paths(temp_artifacts),
             ):
                 result, exit_code = repair.run_command(args)
@@ -1241,7 +1241,7 @@ end B
             request_path = Path(result.work_dir) / "attempt-001" / "backend" / "request.json"
             payload = json.loads(request_path.read_text(encoding="utf-8"))
             assert payload["target_module_path"] == "Problems/RepairTarget.lean"
-            assert payload["helper_module_root"] == "KanProverGenerated.Helpers"
+            assert payload["helper_module_root"] == "ProofctlGenerated.Helpers"
             assert payload["imports"] == []
             assert payload["proof_target"]["declaration_name"] == "fix_me"
             assert payload["proof_target"]["safe_edit"]["kind"] == "replace-body"
@@ -1287,7 +1287,7 @@ end B
             )
             with (
                 patch(
-                    "kan_prover.engine.inspection.SemanticContextProbes.from_workspace",
+                    "lean_proofctl.engine.inspection.SemanticContextProbes.from_workspace",
                     return_value=SemanticContextProbes(
                         declaration_target_result=unavailable,
                         proof_state_result=proof_state_failure,
@@ -1323,7 +1323,7 @@ end B
             )
             with (
                 patch(
-                    "kan_prover.engine.inspection.create_sandbox_workspace",
+                    "lean_proofctl.engine.inspection.create_sandbox_workspace",
                     side_effect=AssertionError("read-only inspect should not create a sandbox"),
                 ),
             ):
@@ -1366,7 +1366,7 @@ end B
                 encoding="utf-8",
             )
             with patch(
-                "kan_prover.engine.inspection._baseline_diagnostics",
+                "lean_proofctl.engine.inspection._baseline_diagnostics",
                 side_effect=AssertionError("default inspect should skip file-state verification"),
             ):
                 result, exit_code = run_inspect(
@@ -1397,7 +1397,7 @@ end B
                 encoding="utf-8",
             )
             with patch(
-                "kan_prover.engine.inspection._baseline_diagnostics",
+                "lean_proofctl.engine.inspection._baseline_diagnostics",
                 side_effect=AssertionError("default retrieve should skip file-state verification"),
             ):
                 result, exit_code = run_retrieve(
@@ -1427,7 +1427,7 @@ end B
                 (self.fixtures / "repair_target.lean").read_text(encoding="utf-8"),
                 encoding="utf-8",
             )
-            with patch("kan_prover.engine.inspection._baseline_diagnostics", return_value=[]) as baseline:
+            with patch("lean_proofctl.engine.inspection._baseline_diagnostics", return_value=[]) as baseline:
                 result, exit_code = run_inspect(
                     tool_paths=self._temp_paths(temp_artifacts),
                     workspace=bind_workspace(workspace_root),
@@ -1474,9 +1474,9 @@ end B
                 "fix_me",
             ]
             with (
-                patch("kan_prover.cli.commands.inspect.discover_tool_paths", return_value=temp_paths),
+                patch("lean_proofctl.cli.commands.inspect.discover_tool_paths", return_value=temp_paths),
                 patch(
-                    "kan_prover.engine.inspection.SemanticContextProbes.from_workspace",
+                    "lean_proofctl.engine.inspection.SemanticContextProbes.from_workspace",
                     return_value=SemanticContextProbes(
                         declaration_target_result=failure,
                         proof_state_result=ProbeResult(
@@ -1539,9 +1539,9 @@ end B
                 "fix_me",
             ]
             with (
-                patch("kan_prover.cli.commands.inspect.discover_tool_paths", return_value=temp_paths),
+                patch("lean_proofctl.cli.commands.inspect.discover_tool_paths", return_value=temp_paths),
                 patch(
-                    "kan_prover.engine.inspection.SemanticContextProbes.from_workspace",
+                    "lean_proofctl.engine.inspection.SemanticContextProbes.from_workspace",
                     return_value=SemanticContextProbes(
                         declaration_target_result=failure,
                         proof_state_result=ProbeResult(
@@ -1599,7 +1599,7 @@ end B
         )
         with (
             patch(
-                "kan_prover.cli.commands.session.run_start",
+                "lean_proofctl.cli.commands.session.run_start",
                 side_effect=UnsupportedTargetError(command="session start", target=target),
             ),
             redirect_stdout(stdout),
@@ -1640,7 +1640,7 @@ end B
                 "fix_me",
             ]
             with (
-                patch("kan_prover.cli.commands.retrieve.discover_tool_paths", return_value=temp_paths),
+                patch("lean_proofctl.cli.commands.retrieve.discover_tool_paths", return_value=temp_paths),
                 redirect_stdout(stdout),
                 redirect_stderr(stderr),
             ):
@@ -1657,7 +1657,7 @@ end B
             first_hit = cast(dict[str, JsonValue], hits[0])
             assert "source_kind" in first_hit
             assert "score_breakdown" in first_hit
-            assert "kan-prover retrieve ok" in stderr.getvalue()
+            assert "proofctl retrieve ok" in stderr.getvalue()
             assert "file_state_check=skipped" in stderr.getvalue()
 
     @pytest.mark.integration
@@ -1685,8 +1685,8 @@ end B
                 "--verify-file-state",
             ]
             with (
-                patch("kan_prover.cli.commands.retrieve.discover_tool_paths", return_value=temp_paths),
-                patch("kan_prover.engine.inspection._baseline_diagnostics", return_value=[]),
+                patch("lean_proofctl.cli.commands.retrieve.discover_tool_paths", return_value=temp_paths),
+                patch("lean_proofctl.engine.inspection._baseline_diagnostics", return_value=[]),
                 redirect_stdout(stdout),
                 redirect_stderr(stderr),
             ):
@@ -1739,9 +1739,9 @@ end B
                 "--enable-embedding-retrieval",
             ]
             with (
-                patch("kan_prover.cli.commands.retrieve.discover_tool_paths", return_value=temp_paths),
+                patch("lean_proofctl.cli.commands.retrieve.discover_tool_paths", return_value=temp_paths),
                 patch(
-                    "kan_prover.engine.retrieval._build_embedding_retriever",
+                    "lean_proofctl.engine.retrieval._build_embedding_retriever",
                     return_value=DeterministicCliEmbeddingRetriever(),
                 ),
                 redirect_stdout(stdout),
@@ -1760,7 +1760,7 @@ end B
                 cast(dict[str, JsonValue], component).get("label") == "embedding-similarity"
                 for component in score_breakdown
             )
-            assert "kan-prover retrieve ok" in stderr.getvalue()
+            assert "proofctl retrieve ok" in stderr.getvalue()
 
     @pytest.mark.integration
     def test_repair_cli_json_reports_required_semantic_probe_failure_for_proof_state_execution_failure(self) -> None:
@@ -1798,8 +1798,8 @@ end B
                 str(candidate_path),
             ]
             with (
-                patch("kan_prover.cli.commands.repair.discover_tool_paths", return_value=temp_paths),
-                patch("kan_prover.engine.proofctl.proof_state", return_value=failure),
+                patch("lean_proofctl.cli.commands.repair.discover_tool_paths", return_value=temp_paths),
+                patch("lean_proofctl.engine.proofctl.proof_state", return_value=failure),
                 redirect_stdout(stdout),
                 redirect_stderr(stderr),
             ):
@@ -1842,9 +1842,9 @@ end B
                 "codex",
             ]
             with (
-                patch("kan_prover.cli.commands.repair.discover_tool_paths", return_value=temp_paths),
+                patch("lean_proofctl.cli.commands.repair.discover_tool_paths", return_value=temp_paths),
                 patch(
-                    "kan_prover.adapters.codex.CodexBackend.propose",
+                    "lean_proofctl.adapters.codex.CodexBackend.propose",
                     side_effect=BackendCommandError(
                         backend="codex",
                         backend_error_kind="unavailable",
@@ -1893,9 +1893,9 @@ end B
                 "codex",
             ]
             with (
-                patch("kan_prover.cli.commands.repair.discover_tool_paths", return_value=temp_paths),
+                patch("lean_proofctl.cli.commands.repair.discover_tool_paths", return_value=temp_paths),
                 patch(
-                    "kan_prover.adapters.codex.CodexBackend.propose",
+                    "lean_proofctl.adapters.codex.CodexBackend.propose",
                     side_effect=BackendCommandError(
                         backend="codex",
                         backend_error_kind="unavailable",
@@ -1929,8 +1929,8 @@ end B
 
             clear_memory_cache()
             with (
-                patch.dict("os.environ", {"KAN_PROVER_SEMANTIC_CACHE_ROOT": str(cache_root)}),
-                patch("kan_prover.engine.proofctl.run_lean_helper", return_value=probe) as runner,
+                patch.dict("os.environ", {"LEAN_PROOFCTL_SEMANTIC_CACHE_ROOT": str(cache_root)}),
+                patch("lean_proofctl.engine.proofctl.run_lean_helper", return_value=probe) as runner,
             ):
                 first = semantic_context_bundle(
                     tool_paths=temp_paths,
@@ -1943,9 +1943,9 @@ end B
 
             clear_memory_cache()
             with (
-                patch.dict("os.environ", {"KAN_PROVER_SEMANTIC_CACHE_ROOT": str(cache_root)}),
+                patch.dict("os.environ", {"LEAN_PROOFCTL_SEMANTIC_CACHE_ROOT": str(cache_root)}),
                 patch(
-                    "kan_prover.engine.proofctl.run_lean_helper",
+                    "lean_proofctl.engine.proofctl.run_lean_helper",
                     side_effect=AssertionError("cache hit should bypass the helper"),
                 ),
             ):
@@ -1973,9 +1973,9 @@ end B
 
             clear_memory_cache()
             with (
-                patch.dict("os.environ", {"KAN_PROVER_SEMANTIC_CACHE_ROOT": str(cache_root)}),
+                patch.dict("os.environ", {"LEAN_PROOFCTL_SEMANTIC_CACHE_ROOT": str(cache_root)}),
                 patch(
-                    "kan_prover.engine.proofctl.run_lean_helper",
+                    "lean_proofctl.engine.proofctl.run_lean_helper",
                     return_value=self._context_bundle_probe_result(file_path=target_file, theorem="target"),
                 ),
             ):
@@ -1989,9 +1989,9 @@ end B
             target_file.write_text("theorem target : True := by\n  trivial\n", encoding="utf-8")
             clear_memory_cache()
             with (
-                patch.dict("os.environ", {"KAN_PROVER_SEMANTIC_CACHE_ROOT": str(cache_root)}),
+                patch.dict("os.environ", {"LEAN_PROOFCTL_SEMANTIC_CACHE_ROOT": str(cache_root)}),
                 patch(
-                    "kan_prover.engine.proofctl.run_lean_helper",
+                    "lean_proofctl.engine.proofctl.run_lean_helper",
                     return_value=self._context_bundle_probe_result(file_path=target_file, theorem="target"),
                 ) as runner,
             ):
@@ -2017,9 +2017,9 @@ end B
 
             clear_memory_cache()
             with (
-                patch.dict("os.environ", {"KAN_PROVER_SEMANTIC_CACHE_ROOT": str(cache_root)}),
+                patch.dict("os.environ", {"LEAN_PROOFCTL_SEMANTIC_CACHE_ROOT": str(cache_root)}),
                 patch(
-                    "kan_prover.engine.proofctl.run_lean_helper",
+                    "lean_proofctl.engine.proofctl.run_lean_helper",
                     return_value=self._context_bundle_probe_result(file_path=target_file, theorem="target"),
                 ),
             ):
@@ -2037,9 +2037,9 @@ end B
             )
             clear_memory_cache()
             with (
-                patch.dict("os.environ", {"KAN_PROVER_SEMANTIC_CACHE_ROOT": str(cache_root)}),
+                patch.dict("os.environ", {"LEAN_PROOFCTL_SEMANTIC_CACHE_ROOT": str(cache_root)}),
                 patch(
-                    "kan_prover.engine.proofctl.run_lean_helper",
+                    "lean_proofctl.engine.proofctl.run_lean_helper",
                     return_value=self._context_bundle_probe_result(file_path=target_file, theorem="target"),
                 ) as runner,
             ):
@@ -2065,9 +2065,9 @@ end B
 
             clear_memory_cache()
             with (
-                patch.dict("os.environ", {"KAN_PROVER_SEMANTIC_CACHE_ROOT": str(cache_root)}),
+                patch.dict("os.environ", {"LEAN_PROOFCTL_SEMANTIC_CACHE_ROOT": str(cache_root)}),
                 patch(
-                    "kan_prover.engine.proofctl.run_lean_helper",
+                    "lean_proofctl.engine.proofctl.run_lean_helper",
                     return_value=self._context_bundle_probe_result(file_path=target_file, theorem="target"),
                 ),
             ):
@@ -2084,9 +2084,9 @@ end B
             record_path.write_text(json.dumps(record), encoding="utf-8")
             clear_memory_cache()
             with (
-                patch.dict("os.environ", {"KAN_PROVER_SEMANTIC_CACHE_ROOT": str(cache_root)}),
+                patch.dict("os.environ", {"LEAN_PROOFCTL_SEMANTIC_CACHE_ROOT": str(cache_root)}),
                 patch(
-                    "kan_prover.engine.proofctl.run_lean_helper",
+                    "lean_proofctl.engine.proofctl.run_lean_helper",
                     return_value=self._context_bundle_probe_result(file_path=target_file, theorem="target"),
                 ) as runner,
             ):
@@ -2159,8 +2159,8 @@ end B
 
             clear_memory_cache()
             with (
-                patch.dict("os.environ", {"KAN_PROVER_SEMANTIC_CACHE_ROOT": str(cache_root)}),
-                patch("kan_prover.engine.proofctl.run_lean_helper", return_value=probe) as runner,
+                patch.dict("os.environ", {"LEAN_PROOFCTL_SEMANTIC_CACHE_ROOT": str(cache_root)}),
+                patch("lean_proofctl.engine.proofctl.run_lean_helper", return_value=probe) as runner,
             ):
                 first = batch_declaration_inventory(
                     tool_paths=temp_paths,
@@ -2173,9 +2173,9 @@ end B
 
             clear_memory_cache()
             with (
-                patch.dict("os.environ", {"KAN_PROVER_SEMANTIC_CACHE_ROOT": str(cache_root)}),
+                patch.dict("os.environ", {"LEAN_PROOFCTL_SEMANTIC_CACHE_ROOT": str(cache_root)}),
                 patch(
-                    "kan_prover.engine.proofctl.run_lean_helper",
+                    "lean_proofctl.engine.proofctl.run_lean_helper",
                     side_effect=AssertionError("cache hit should bypass the helper"),
                 ),
             ):
@@ -2190,8 +2190,8 @@ end B
             helper_file.write_text("theorem helper_truth : True := by\n  trivial\n", encoding="utf-8")
             clear_memory_cache()
             with (
-                patch.dict("os.environ", {"KAN_PROVER_SEMANTIC_CACHE_ROOT": str(cache_root)}),
-                patch("kan_prover.engine.proofctl.run_lean_helper", return_value=probe) as runner,
+                patch.dict("os.environ", {"LEAN_PROOFCTL_SEMANTIC_CACHE_ROOT": str(cache_root)}),
+                patch("lean_proofctl.engine.proofctl.run_lean_helper", return_value=probe) as runner,
             ):
                 third = batch_declaration_inventory(
                     tool_paths=temp_paths,

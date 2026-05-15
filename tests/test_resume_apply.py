@@ -1,4 +1,4 @@
-"""Tests for `kan-prover resume` and `kan-prover apply`."""
+"""Tests for `proofctl resume` and `proofctl apply`."""
 
 import argparse
 import json
@@ -9,12 +9,12 @@ from unittest.mock import patch
 
 import pytest
 
-from kan_prover.cli.commands import apply, prove, resume
-from kan_prover.engine.config import ToolPaths, WorkspaceBinding, bind_workspace, discover_tool_paths
-from kan_prover.engine.models import ApplyErrorCode, ApplyStatus, JsonValue, ProveResult, ProveStatus, ResumeStatus
-from kan_prover.engine.proofctl import stored_proof_target_contract_error
-from kan_prover.engine.replay import RunBundle
-from kan_prover.engine.sandbox import helper_module_relative_path
+from lean_proofctl.cli.commands import apply, prove, resume
+from lean_proofctl.engine.config import ToolPaths, WorkspaceBinding, bind_workspace, discover_tool_paths
+from lean_proofctl.engine.models import ApplyErrorCode, ApplyStatus, JsonValue, ProveResult, ProveStatus, ResumeStatus
+from lean_proofctl.engine.proofctl import stored_proof_target_contract_error
+from lean_proofctl.engine.replay import RunBundle
+from lean_proofctl.engine.sandbox import helper_module_relative_path
 
 GOOD_BODY = """by
   exact True.intro
@@ -90,7 +90,7 @@ class TestResumeApply:
                 max_nodes=6,
             )
             with patch(
-                "kan_prover.cli.commands.resume.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                "lean_proofctl.cli.commands.resume.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
             ):
                 result, exit_code = resume.run_command(args)
 
@@ -132,7 +132,7 @@ class TestResumeApply:
                 max_nodes=6,
             )
             with patch(
-                "kan_prover.cli.commands.resume.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                "lean_proofctl.cli.commands.resume.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
             ):
                 result, exit_code = resume.run_command(args)
 
@@ -164,7 +164,7 @@ class TestResumeApply:
                 graph_index=None,
             )
             with patch(
-                "kan_prover.cli.commands.apply.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                "lean_proofctl.cli.commands.apply.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
             ):
                 result, exit_code = apply.run_command(args)
 
@@ -176,7 +176,7 @@ class TestResumeApply:
             assert "exact helper_truth" in updated
             helper_path = (
                 workspace.root
-                / "KanProverGenerated"
+                / "ProofctlGenerated"
                 / "Helpers"
                 / helper_module_relative_path(module_name=helper.module_name)
             )
@@ -213,7 +213,7 @@ class TestResumeApply:
                 run_id=source_run_id, workspace=str(workspace.root), node_id=None, graph_index=None
             )
             with patch(
-                "kan_prover.cli.commands.apply.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                "lean_proofctl.cli.commands.apply.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
             ):
                 result, exit_code = apply.run_command(args)
 
@@ -239,7 +239,7 @@ class TestResumeApply:
             helper = source_result.helpers[-1]
             helper_path = (
                 workspace.root
-                / "KanProverGenerated"
+                / "ProofctlGenerated"
                 / "Helpers"
                 / helper_module_relative_path(module_name=helper.module_name)
             )
@@ -253,7 +253,7 @@ class TestResumeApply:
                 graph_index=None,
             )
             with patch(
-                "kan_prover.cli.commands.apply.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                "lean_proofctl.cli.commands.apply.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
             ):
                 result, exit_code = apply.run_command(args)
 
@@ -299,7 +299,7 @@ class TestResumeApply:
             result={},
         )
         error = stored_proof_target_contract_error(
-            command="kan-prover apply",
+            command="proofctl apply",
             proof_target=cast(JsonValue, bundle.request["proof_target"]),
             payload=None,
         )
@@ -331,7 +331,9 @@ class TestResumeApply:
             json=False,
             jsonl=False,
         )
-        with patch("kan_prover.cli.commands.prove.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)):
+        with patch(
+            "lean_proofctl.cli.commands.prove.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+        ):
             result, exit_code = prove.run_command(args)
         assert exit_code == 0 if result.status is ProveStatus.VERIFIED else 1
         return result.run_id, result

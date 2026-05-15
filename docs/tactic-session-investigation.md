@@ -1,8 +1,8 @@
-# Tactic-Level Session Investigation For `kan-prover`
+# Tactic-Level Session Investigation For `proofctl`
 
 ## Scope
 
-Issue [#271](https://github.com/jcreinhold/kan/issues/271) asks whether `kan-prover` should add tactic-level session
+Issue [#271](https://github.com/jcreinhold/kan/issues/271) asks whether `proofctl` should add tactic-level session
 actions. This write-up stays an investigation note, not a feature spec.
 
 The question is now:
@@ -16,11 +16,11 @@ comparison, the main costs, and what changed in the runtime since the first vers
 
 ## Current Session Surface
 
-`kan-prover` sessions are still whole-body oriented.
+`proofctl` sessions are still whole-body oriented.
 
-- [`session.py`](/Users/jcreinhold/Code/kan/tools/kan-prover/src/kan_prover/engine/session.py) replaces a theorem body,
+- [`session.py`](/Users/jcreinhold/Code/lean-proofctl/src/lean_proofctl/engine/session.py) replaces a theorem body,
     checks the file, and records the resulting theorem state.
-- [`prove.py`](/Users/jcreinhold/Code/kan/tools/kan-prover/src/kan_prover/engine/prove.py) builds graph search on top of
+- [`prove.py`](/Users/jcreinhold/Code/lean-proofctl/src/lean_proofctl/engine/prove.py) builds graph search on top of
     those theorem sessions.
 - `session step` is still full-body replacement, not tactic stepping.
 
@@ -33,18 +33,18 @@ The repository no longer has the old single-file runtime story.
 
 The current Lean runtime is split across:
 
-- [`Main.lean`](/Users/jcreinhold/Code/kan/tools/kan-prover/lean-runtime/Tools/SemanticProbe/Main.lean)
-- [`LoadedFile.lean`](/Users/jcreinhold/Code/kan/tools/kan-prover/lean-runtime/Tools/SemanticProbe/LoadedFile.lean)
-- [`LiveFileSession.lean`](/Users/jcreinhold/Code/kan/tools/kan-prover/lean-runtime/Tools/SemanticProbe/LiveFileSession.lean)
-- [`LiveProtocol.lean`](/Users/jcreinhold/Code/kan/tools/kan-prover/lean-runtime/Tools/SemanticProbe/LiveProtocol.lean)
+- [`Main.lean`](/Users/jcreinhold/Code/lean-proofctl/lean-runtime/Tools/SemanticProbe/Main.lean)
+- [`LoadedFile.lean`](/Users/jcreinhold/Code/lean-proofctl/lean-runtime/Tools/SemanticProbe/LoadedFile.lean)
+- [`LiveFileSession.lean`](/Users/jcreinhold/Code/lean-proofctl/lean-runtime/Tools/SemanticProbe/LiveFileSession.lean)
+- [`LiveProtocol.lean`](/Users/jcreinhold/Code/lean-proofctl/lean-runtime/Tools/SemanticProbe/LiveProtocol.lean)
 
 The current Python runtime split is explicit too:
 
-- [`semantic_runner.py`](/Users/jcreinhold/Code/kan/tools/kan-prover/src/kan_prover/engine/semantic_runner.py) defines
+- [`semantic_runner.py`](/Users/jcreinhold/Code/lean-proofctl/src/lean_proofctl/engine/semantic_runner.py) defines
     the one-shot semantic runner contract
-- [`semantic_live.py`](/Users/jcreinhold/Code/kan/tools/kan-prover/src/kan_prover/engine/semantic_live.py) defines the
+- [`semantic_live.py`](/Users/jcreinhold/Code/lean-proofctl/src/lean_proofctl/engine/semantic_live.py) defines the
     live same-process semantic runner
-- [`semantic_probe_runtime.py`](/Users/jcreinhold/Code/kan/tools/kan-prover/src/kan_prover/engine/semantic_probe_runtime.py)
+- [`semantic_probe_runtime.py`](/Users/jcreinhold/Code/lean-proofctl/src/lean_proofctl/engine/semantic_probe_runtime.py)
     boots the compiled `SemanticProbe` executable and the live `serve` process
 
 That means two old claims are no longer true:
@@ -71,7 +71,7 @@ feasibility. It is not the same thing as persistent tactic stepping.
 
 ### Python investigation harness
 
-[`tactic_session_investigation.py`](/Users/jcreinhold/Code/kan/tools/kan-prover/src/kan_prover/investigation/tactic_session_investigation.py)
+[`tactic_session_investigation.py`](/Users/jcreinhold/Code/lean-proofctl/src/lean_proofctl/investigation/tactic_session_investigation.py)
 provides a bounded comparison harness over the standard benchmark manifests.
 
 The harness compares:
@@ -106,7 +106,7 @@ The completed comparison run used this tiny-budget configuration:
 - frontier means Lean reports only unsolved goals
 
 The JSON artifact is checked in at
-[`tactic-session-investigation.json`](/Users/jcreinhold/Code/kan/tools/kan-prover/docs/data/tactic-session-investigation.json).
+[`tactic-session-investigation.json`](/Users/jcreinhold/Code/lean-proofctl/docs/data/tactic-session-investigation.json).
 
 ## Results
 
@@ -250,10 +250,10 @@ In short:
 The following checks and experiments were run for this investigation:
 
 - `uv run pytest tests/test_tactic_session_investigation.py`
-- `uv run python -m kan_prover.investigation.tactic_session_investigation`
+- `uv run python -m lean_proofctl.investigation.tactic_session_investigation`
 - direct manual whole-body verification checks on five miniF2F targets with a `20s` timeout
 - direct `SemanticProbe` success case on `mathd_numbertheory_1124`
 - direct `SemanticProbe` failure case on `mathd_algebra_33`
 
-No broader `tools/kan-prover` test suite was needed for this issue because the work is investigation-only and scoped to
+No broader `lean-proofctl` test suite was needed for this issue because the work is investigation-only and scoped to
 the helper command, harness, and this design note.

@@ -4,7 +4,7 @@ from pathlib import Path
 
 from _pytest.monkeypatch import MonkeyPatch
 
-from kan_prover.investigation.tactic_session_investigation import (
+from lean_proofctl.investigation.tactic_session_investigation import (
     AttemptStatus,
     LeanRunResult,
     classify_lean_run,
@@ -77,7 +77,7 @@ def test_evaluate_targets_skips_tactic_search_after_whole_body_success(
     target_file = tmp_path / "Demo.lean"
     target_file.write_text(source, encoding="utf-8")
 
-    from kan_prover.investigation import tactic_session_investigation as mod
+    from lean_proofctl.investigation import tactic_session_investigation as mod
 
     calls: list[str] = []
 

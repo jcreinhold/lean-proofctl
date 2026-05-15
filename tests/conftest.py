@@ -1,4 +1,4 @@
-"""Shared pytest fixtures for `kan-prover` tests."""
+"""Shared pytest fixtures for `proofctl` tests."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from kan_prover.engine.config import ToolPaths, WorkspaceBinding, bind_workspace, discover_tool_paths
+from lean_proofctl.engine.config import ToolPaths, WorkspaceBinding, bind_workspace, discover_tool_paths
 from tests.workspaces import downstream_kan_workspace
 
 type FixturePathReader = Callable[[str], Path]
@@ -27,7 +27,7 @@ def tool_paths() -> ToolPaths:
 
 
 @pytest.fixture(scope="session")
-def kan_prover_root(tool_paths: ToolPaths) -> Path:
+def lean_proofctl_root(tool_paths: ToolPaths) -> Path:
     return tool_paths.root
 
 
@@ -37,13 +37,13 @@ def repo_root(tool_paths: ToolPaths) -> Path:
 
 
 @pytest.fixture(scope="session")
-def fixtures_dir(kan_prover_root: Path) -> Path:
-    return kan_prover_root / "tests" / "fixtures"
+def fixtures_dir(lean_proofctl_root: Path) -> Path:
+    return lean_proofctl_root / "tests" / "fixtures"
 
 
 @pytest.fixture(scope="session")
-def acceptance_dir(kan_prover_root: Path) -> Path:
-    return kan_prover_root / "tests" / "acceptance"
+def acceptance_dir(lean_proofctl_root: Path) -> Path:
+    return lean_proofctl_root / "tests" / "acceptance"
 
 
 @pytest.fixture(scope="session")

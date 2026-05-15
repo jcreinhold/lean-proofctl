@@ -1,7 +1,7 @@
 # LLM-Based Proof Search and Repair for Lean: Literature Review
 
 **Date:** 2026-03-28 **Scope:** Recent developments (2023-03 through 2026-03) in LLM-based proof search, proof repair,
-and verifier-first proving for Lean, compared against `kan-prover`.
+and verifier-first proving for Lean, compared against `proofctl`.
 
 ______________________________________________________________________
 
@@ -16,23 +16,23 @@ decomposes theorems, delegates subgoals to specialized provers, and repairs fail
 Hilbert, Prover Agent); and (3) retrieval-augmented tactic-level search with progress estimation (LeanDojo/ReProver,
 LeanProgress, Lean Copilot).
 
-The biggest implications for `kan-prover`:
+The biggest implications for `proofctl`:
 
-1. **Subgoal decomposition with verifier feedback is the highest-leverage proving strategy.** `kan-prover` already has
+1. **Subgoal decomposition with verifier feedback is the highest-leverage proving strategy.** `proofctl` already has
     decomposition and helper-lemma workflows; the literature confirms this is the right shape but shows that recursive
     decomposition with per-subgoal repair loops substantially outperforms flat decomposition.
-1. **Whole-proof generation now dominates tactic-by-tactic search for standard benchmarks.** `kan-prover`'s session-step
+1. **Whole-proof generation now dominates tactic-by-tactic search for standard benchmarks.** `proofctl`'s session-step
     model replaces whole theorem bodies, which aligns well. But the literature shows that chain-of-thought reasoning
     interleaved with formal steps (Lean-STaR, Kimina-Prover) and self-correction loops (Goedel-Prover-V2) add
     significant value on top of whole-proof generation.
 1. **Lean-side infrastructure has consolidated around a few key interfaces** --- Pantograph for machine-to-machine
     tactic interaction, LeanDojo for data extraction and training, and LeanInteract/lean4-repl for lightweight
-    Python-Lean bridges. `kan-prover`'s custom SemanticProbe surface is more tightly workspace-integrated than any of
+    Python-Lean bridges. `proofctl`'s custom SemanticProbe surface is more tightly workspace-integrated than any of
     these, but it lacks tactic-level granularity.
 1. **Retrieval-augmented proving matters, but the strongest retrieval is over semantic embeddings of proof states, not
-    just declaration names.** `kan-prover`'s token-overlap retrieval is functional but behind the state of the art.
+    just declaration names.** `proofctl`'s token-overlap retrieval is functional but behind the state of the art.
 1. **Proof repair as a distinct task now has its own dataset (APRIL) and training methodology.** This is directly
-    relevant to `kan-prover`'s repair loop.
+    relevant to `proofctl`'s repair loop.
 
 ______________________________________________________________________
 
@@ -60,8 +60,8 @@ proof body; the Lean compiler checks it.
     7B distilled versions). Lean 4.
 
 **Why it matters.** These systems show that whole-proof generation, combined with RL from verifier feedback, is now the
-dominant paradigm for benchmark performance. `kan-prover`'s `repair` and `session step` commands already consume whole
-theorem bodies, so the architectural fit is good. The key gap is that `kan-prover` does not yet expose a self-correction
+dominant paradigm for benchmark performance. `proofctl`'s `repair` and `session step` commands already consume whole
+theorem bodies, so the architectural fit is good. The key gap is that `proofctl` does not yet expose a self-correction
 loop where verifier diagnostics are fed back to the model for iterative refinement within a single attempt.
 
 ### 2.2 Agentic Orchestration with Decomposition
@@ -84,11 +84,11 @@ and reassembles verified sub-proofs.
     informal reasoning LLM, formal prover, Lean feedback. Generates auxiliary lemmas (not just subgoals but also special
     cases and useful facts). **88.1% miniF2F; 25/658 PutnamBench with small models.** Lean 4.
 
-**Why it matters.** This is the closest architectural match to `kan-prover`'s `prove` command (graph-backed search with
+**Why it matters.** This is the closest architectural match to `proofctl`'s `prove` command (graph-backed search with
 planning, decomposition, helper-lemma management, and session-based subgoal proving). The literature confirms that the
 decompose-delegate-repair pattern works. Key differences: the literature systems use fine-tuned specialized provers for
 subgoals (not general-purpose LLM backends), and they do recursive decomposition (subgoals can themselves be
-decomposed). `kan-prover` currently supports one level of decomposition.
+decomposed). `proofctl` currently supports one level of decomposition.
 
 ### 2.3 Retrieval-Augmented Theorem Proving
 
@@ -108,10 +108,10 @@ proof state or theorem statement.
     steps from the current proof state. Uses this as a search heuristic in best-first search. **75.1% prediction
     accuracy; 3.8% improvement on Mathlib4 over ReProver baseline.** Lean 4.
 
-**Why it matters.** `kan-prover`'s retrieval system (`retrieval.py`) collects hits from 9+ source families: same-file
+**Why it matters.** `proofctl`'s retrieval system (`retrieval.py`) collects hits from 9+ source families: same-file
 declarations, same-namespace declarations, goal-mentioned declarations, accepted patches, proved helpers, proof
 fragments, graph run artifacts, and failure summaries. This is broader in source diversity than any system in the
-literature. However, `kan-prover` scores hits using token overlap and heuristic weights, while the literature uses
+literature. However, `proofctl` scores hits using token overlap and heuristic weights, while the literature uses
 learned dense embeddings over proof states. The scoring gap is the main retrieval weakness.
 
 ### 2.4 Tactic-Level Search
@@ -130,11 +130,11 @@ MCTS) to explore the proof tree.
 - **InternLM2.5-StepProver** (Oct 2024, arXiv [2410.15700](https://arxiv.org/abs/2410.15700)). Expert iteration on
     large-scale Lean problems. Scales tactic-level proving to harder problems through curriculum.
 
-**Why it matters.** `kan-prover`'s session model replaces entire theorem bodies, not individual tactics. The literature
+**Why it matters.** `proofctl`'s session model replaces entire theorem bodies, not individual tactics. The literature
 shows that tactic-level search with verifier feedback at each step enables finer-grained error localization and
 backtracking. However, whole-proof approaches have caught up or surpassed tactic-level search on standard benchmarks.
 The main advantage of tactic-level interaction is for longer, more complex proofs where whole-proof generation fails.
-`kan-prover` could benefit from optional tactic-level granularity in sessions, but this is not the highest priority.
+`proofctl` could benefit from optional tactic-level granularity in sessions, but this is not the highest priority.
 
 ### 2.5 Proof Repair
 
@@ -152,10 +152,10 @@ that the input includes a plausible but incorrect attempt.
 - **APOLLO repair agents** (May 2025). Agents analyze proofs, fix syntax errors, identify failing sub-lemmas using Lean
     diagnostics, and retry.
 
-**Why it matters.** `kan-prover`'s `repair` and `solve` commands are already structured as repair loops: verify a
+**Why it matters.** `proofctl`'s `repair` and `solve` commands are already structured as repair loops: verify a
 candidate, collect diagnostics, pass them to the backend, get a revised candidate. The APRIL dataset demonstrates that
 repair-specific training data matters. The self-correction patterns in Goedel-Prover-V2 and APOLLO show that feeding
-structured diagnostics (not just "it failed") to the model significantly improves repair success. `kan-prover` already
+structured diagnostics (not just "it failed") to the model significantly improves repair success. `proofctl` already
 passes diagnostics to backends, which is the right shape.
 
 ### 2.6 Informal-to-Formal and Decomposition
@@ -171,9 +171,9 @@ passes diagnostics to backends, which is the right shape.
 - **Hilbert recursive decomposition** (Sep 2025). Splits problems recursively; each level can invoke informal reasoning
     or formal proving.
 
-**Why it matters.** `kan-prover`'s `plan` and `decompose` commands implement a version of this pattern. The literature
+**Why it matters.** `proofctl`'s `plan` and `decompose` commands implement a version of this pattern. The literature
 shows that recursive decomposition (subgoals of subgoals) and informal reasoning interleaved with formal steps are the
-key ingredients. `kan-prover`'s decomposition is currently single-level. Making it recursive is a clear opportunity.
+key ingredients. `proofctl`'s decomposition is currently single-level. Making it recursive is a clear opportunity.
 
 ### 2.7 Lean-Side Infrastructure
 
@@ -193,32 +193,32 @@ verification.
     JSONL datasets.
 - **lean4-repl** (2024). Lean 4 REPL that can execute commands and tactics, returning proof state.
 
-**Why it matters.** `kan-prover`'s SemanticProbe.lean is a custom Lean helper surface that provides declaration
+**Why it matters.** `proofctl`'s SemanticProbe.lean is a custom Lean helper surface that provides declaration
 targeting, proof state, local context, goal snapshots, and insertion points. This is more tightly integrated with a
 specific workspace than Pantograph (which is environment-level, not workspace-level). However, Pantograph exposes
-tactic-level execution and MCTS-compatible state transitions, which `kan-prover` lacks. The gap is tactic-level
+tactic-level execution and MCTS-compatible state transitions, which `proofctl` lacks. The gap is tactic-level
 interaction, not workspace awareness.
 
 ______________________________________________________________________
 
-## 3. Comparison to kan-prover
+## 3. Comparison to proofctl
 
 ### Ahead
 
-- **Workspace-aware verification.** No system in the literature binds to a real Lake workspace the way `kan-prover` does
-    with `--workspace`. Most systems operate on isolated files or standardized benchmark environments. `kan-prover`
+- **Workspace-aware verification.** No system in the literature binds to a real Lake workspace the way `proofctl` does
+    with `--workspace`. Most systems operate on isolated files or standardized benchmark environments. `proofctl`
     verifies against the actual project dependencies, imports, and build configuration.
-- **Durable, replayable artifacts.** `kan-prover` persists every probe result, backend request/response, retrieval hit,
+- **Durable, replayable artifacts.** `proofctl` persists every probe result, backend request/response, retrieval hit,
     and verification outcome in structured artifact bundles that support `replay`, `export`, and `trace`. No comparable
     system in the literature provides this level of audit trail.
-- **Sandbox-then-apply workflow.** `kan-prover` verifies in a sandbox copy of the workspace before any write-back. The
+- **Sandbox-then-apply workflow.** `proofctl` verifies in a sandbox copy of the workspace before any write-back. The
     `apply` command requires an explicit verified branch. Most literature systems either write directly or operate in
     ephemeral environments.
-- **Multi-source retrieval with near-miss explanation.** `kan-prover`'s retrieval collects from 9+ source families and
+- **Multi-source retrieval with near-miss explanation.** `proofctl`'s retrieval collects from 9+ source families and
     reports near-misses with omission reasons. This is richer in source diversity than any published system (most use
     only premise selection from mathlib or the local file).
-- **Helper-lemma management.** `kan-prover` materializes helpers under a managed namespace
-    (`KanProverGenerated.Helpers`), tracks their verification status, and includes them in retrieval for subsequent
+- **Helper-lemma management.** `proofctl` materializes helpers under a managed namespace
+    (`ProofctlGenerated.Helpers`), tracks their verification status, and includes them in retrieval for subsequent
     proving. This is comparable to Prover Agent and Hilbert but more explicit in namespace management.
 - **Graph-backed search with session reuse.** The `prove`/`resume` workflow builds a proof graph where each node is a
     full session snapshot with verification status. This is more structured than the tree search in most literature
@@ -226,59 +226,59 @@ ______________________________________________________________________
 
 ### Aligned
 
-- **Whole-body replacement model.** `kan-prover`'s `repair`, `solve`, and `session step` replace entire theorem bodies,
+- **Whole-body replacement model.** `proofctl`'s `repair`, `solve`, and `session step` replace entire theorem bodies,
     not individual tactics. This aligns with the dominant whole-proof generation paradigm (DeepSeek-Prover-V2,
     Goedel-Prover-V2, Kimina-Prover).
-- **Diagnostic-driven repair loops.** `kan-prover` passes Lean diagnostics to backends for generating revised
+- **Diagnostic-driven repair loops.** `proofctl` passes Lean diagnostics to backends for generating revised
     candidates. This matches APOLLO's pattern and Goedel-Prover-V2's self-correction mode.
-- **Planning before search.** `kan-prover`'s `plan` command asks for a structured theorem plan before search, similar to
+- **Planning before search.** `proofctl`'s `plan` command asks for a structured theorem plan before search, similar to
     DSP's sketch and DeepSeek-Prover-V2's decomposition phase.
-- **Decomposition into helpers.** `kan-prover`'s `decompose` command proposes and verifies helper lemmas, matching the
+- **Decomposition into helpers.** `proofctl`'s `decompose` command proposes and verifies helper lemmas, matching the
     decomposition patterns in APOLLO, Hilbert, and Prover Agent.
-- **Lean-backed declaration targeting.** `kan-prover`'s SemanticProbe provides Lean-authoritative declaration spans,
+- **Lean-backed declaration targeting.** `proofctl`'s SemanticProbe provides Lean-authoritative declaration spans,
     namespace data, and proof state, similar in spirit to Pantograph's declaration inspection but workspace-scoped.
 
 ### Behind
 
-- **Retrieval scoring.** `kan-prover` scores retrieval hits using token overlap and heuristic weights (`retrieval.py`
+- **Retrieval scoring.** `proofctl` scores retrieval hits using token overlap and heuristic weights (`retrieval.py`
     lines 92-109: `theorem_tokens`, `constants`, `type_heads`). The literature uses learned dense embeddings (ReProver)
     or semantic search (Hilbert). Token overlap is functional but will miss semantically similar declarations with
     different surface forms.
-- **No recursive decomposition.** `kan-prover`'s decomposition is single-level: it proposes helpers for the target
+- **No recursive decomposition.** `proofctl`'s decomposition is single-level: it proposes helpers for the target
     theorem. Hilbert and DeepSeek-Prover-V2 recursively decompose subgoals. This matters for harder theorems.
-- **No self-correction within a single attempt.** `kan-prover`'s repair loop generates a new candidate per attempt.
+- **No self-correction within a single attempt.** `proofctl`'s repair loop generates a new candidate per attempt.
     Goedel-Prover-V2's self-correction mode and APOLLO's repair agents refine within a single attempt using structured
-    diagnostic feedback. The distinction: `kan-prover` retries with fresh backend calls; the literature shows that
+    diagnostic feedback. The distinction: `proofctl` retries with fresh backend calls; the literature shows that
     conditioning on the specific failure (not just the diagnostics) improves repair quality.
-- **No tactic-level interaction.** `kan-prover` sessions operate at whole-body granularity. Pantograph and COPRA expose
+- **No tactic-level interaction.** `proofctl` sessions operate at whole-body granularity. Pantograph and COPRA expose
     tactic-level state transitions, enabling finer-grained search and error localization. This is less critical given
     that whole-proof generation dominates benchmarks, but matters for complex proofs.
-- **No proof progress estimation.** LeanProgress predicts remaining proof steps to guide search. `kan-prover` has no
+- **No proof progress estimation.** LeanProgress predicts remaining proof steps to guide search. `proofctl` has no
     analogous heuristic for prioritizing which graph nodes to expand.
 
 ### Missing
 
-- **No model fine-tuning or RL pipeline.** `kan-prover` is backend-agnostic (it calls an LLM API) and does not train or
+- **No model fine-tuning or RL pipeline.** `proofctl` is backend-agnostic (it calls an LLM API) and does not train or
     fine-tune models. All the strongest benchmark results come from models trained with RL from verifier feedback (GRPO
     on binary verification reward). This is a deliberate architectural choice (Python orchestration, not model
-    training), but it means `kan-prover` depends entirely on the quality of the backend model.
+    training), but it means `proofctl` depends entirely on the quality of the backend model.
 - **No informal reasoning integration.** Hilbert and DeepSeek-Prover-V2 use an informal reasoning model (GPT, Gemini,
-    DeepSeek-V3) to produce high-level proof sketches before formalization. `kan-prover`'s `plan` command delegates this
+    DeepSeek-V3) to produce high-level proof sketches before formalization. `proofctl`'s `plan` command delegates this
     to the backend, but there is no explicit informal-then-formal pipeline.
 - **No proof-state embedding for retrieval.** The strongest retrieval systems (ReProver) encode proof states as dense
-    vectors and retrieve premises by similarity. `kan-prover` has no embedding model.
+    vectors and retrieve premises by similarity. `proofctl` has no embedding model.
 - **No synthetic data or training data extraction pipeline.** ntp-toolkit and LeanDojo extract training data from Lean
-    repos. `kan-prover` does not produce training data from its verification runs, though its artifact structure could
+    repos. `proofctl` does not produce training data from its verification runs, though its artifact structure could
     support this.
 - **No benchmark suite beyond internal acceptance.** The literature uses miniF2F, PutnamBench, ProofNet, and Mathlib4 as
-    standard evaluation. `kan-prover`'s `bench` command runs local manifests but there is no standardized cross-system
+    standard evaluation. `proofctl`'s `bench` command runs local manifests but there is no standardized cross-system
     benchmark integration.
 
 ______________________________________________________________________
 
 ## 4. High-Leverage Opportunities
 
-Ranked by expected impact for `kan-prover` given its current verifier-first, workspace-aware, artifact-heavy design.
+Ranked by expected impact for `proofctl` given its current verifier-first, workspace-aware, artifact-heavy design.
 
 ### 1. Recursive Decomposition
 
@@ -286,7 +286,7 @@ Ranked by expected impact for `kan-prover` given its current verifier-first, wor
 decomposed. Allow the `prove` graph to recurse: a node that needs a helper spawns a sub-prove for that helper.
 
 **Why it matters.** Hilbert (99.2% miniF2F) and DeepSeek-Prover-V2 (88.9%) both show that recursive decomposition is the
-single largest contributor to solving hard theorems. `kan-prover` already has single-level decomposition; making it
+single largest contributor to solving hard theorems. `proofctl` already has single-level decomposition; making it
 recursive is a natural extension.
 
 **Side:** Mostly Python (prove.py, loop.py). Some Lean-side work if helper verification needs chained Lake builds.
@@ -301,7 +301,7 @@ specific failing subexpression. Allow the backend to attempt in-place correction
 before generating a wholly new candidate.
 
 **Why it matters.** APOLLO's 84.9% with sub-8B models comes largely from structured error analysis and targeted repair.
-Goedel-Prover-V2's self-correction adds 2.3 percentage points. `kan-prover` already classifies diagnostics
+Goedel-Prover-V2's self-correction adds 2.3 percentage points. `proofctl` already classifies diagnostics
 (`diagnostics.py`) but does not use this classification to guide repair strategy.
 
 **Side:** Python (loop.py, inspection.py, diagnostics.py). No Lean changes needed.
@@ -344,7 +344,7 @@ prove.py.
 comparable to the literature (pass@k, solve rate, backend calls per theorem, wall time). This enables objective
 measurement of backend quality and search strategy improvements.
 
-**Why it matters.** Without standard benchmarks, improvements to `kan-prover`'s search, retrieval, or decomposition
+**Why it matters.** Without standard benchmarks, improvements to `proofctl`'s search, retrieval, or decomposition
 cannot be compared to the literature. The `bench` command already exists; what's missing is the benchmark data and the
 standardized evaluation protocol.
 
@@ -356,7 +356,7 @@ ______________________________________________________________________
 
 ## 5. Evidence Table
 
-| System / Paper                                                 | Year | Lean | Task                                 | Key Idea                                                           | Evaluation                         | kan-prover Relevance             |
+| System / Paper                                                 | Year | Lean | Task                                 | Key Idea                                                           | Evaluation                         | proofctl Relevance             |
 | -------------------------------------------------------------- | ---- | ---- | ------------------------------------ | ------------------------------------------------------------------ | ---------------------------------- | -------------------------------- |
 | [LeanDojo / ReProver](https://arxiv.org/abs/2306.15626)        | 2023 | 4    | Retrieval-augmented tactic search    | Dense premise retrieval + encoder-decoder tactic generation        | 98K theorems from mathlib; miniF2F | Retrieval architecture reference |
 | [COPRA](https://arxiv.org/abs/2310.04353)                      | 2023 | 3/4  | Stateful tactic search               | GPT-4 in backtracking search with execution feedback               | miniF2F                            | Session-style proving reference  |
@@ -392,7 +392,7 @@ ______________________________________________________________________
 
 ### Parent Tracker
 
-**Title:** `kan-prover proof search: literature-informed improvements`
+**Title:** `proofctl proof search: literature-informed improvements`
 
 **Body:** Implement the highest-leverage improvements identified in the 2026-03-28 literature review of LLM-based proof
 search and repair for Lean. Focus areas: recursive decomposition, structured diagnostic repair, embedding-based
@@ -433,14 +433,14 @@ retrieval, and standard benchmark integration.
 - Add a PutnamBench subset
 - Create `bench` manifests that produce pass@k, solve rate, and backend-call-per-theorem metrics
 - Produce results in a format comparable to the literature evidence table
-- Acceptance: `make -C tools/kan-prover bench` runs the standard benchmarks and produces a comparable results table
+- Acceptance: `make -C lean-proofctl bench` runs the standard benchmarks and produces a comparable results table
 - Depends on: nothing (builds on existing bench infrastructure)
 
 **5. Investigate tactic-level session actions**
 
 - Evaluate whether Pantograph integration or a SemanticProbe extension can provide tactic-level state transitions
 - Prototype a `session tactic` action that executes one tactic and returns updated goals
-- Assess the value for `kan-prover`'s proving workflows on hard theorems
+- Assess the value for `proofctl`'s proving workflows on hard theorems
 - Acceptance: design document with prototype results and a go/no-go recommendation
 - Depends on: #4 (need benchmark data to evaluate whether tactic-level interaction helps)
 
@@ -497,22 +497,22 @@ ______________________________________________________________________
 
 **Local code reviewed:**
 
-- `tools/kan-prover/README.md`
-- `tools/kan-prover/src/kan_prover/engine/proofctl.py`
-- `tools/kan-prover/src/kan_prover/engine/lean_helpers.py`
-- `tools/kan-prover/src/kan_prover/engine/inspection.py`
-- `tools/kan-prover/src/kan_prover/engine/retrieval.py`
-- `tools/kan-prover/src/kan_prover/engine/loop.py`
-- `tools/kan-prover/src/kan_prover/engine/session.py`
-- `tools/kan-prover/src/kan_prover/engine/prove.py`
-- `tools/kan-prover/lean-runtime/Tools/SemanticProbe.lean`
+- `lean-proofctl/README.md`
+- `lean-proofctl/src/lean_proofctl/engine/proofctl.py`
+- `lean-proofctl/src/lean_proofctl/engine/lean_helpers.py`
+- `lean-proofctl/src/lean_proofctl/engine/inspection.py`
+- `lean-proofctl/src/lean_proofctl/engine/retrieval.py`
+- `lean-proofctl/src/lean_proofctl/engine/loop.py`
+- `lean-proofctl/src/lean_proofctl/engine/session.py`
+- `lean-proofctl/src/lean_proofctl/engine/prove.py`
+- `lean-proofctl/lean-runtime/Tools/SemanticProbe.lean`
 - GitHub issues #228, #246, #258
 
 ### Search Gaps and Uncertainty
 
 - **AlphaProof.** Google DeepMind's AlphaProof (IMO 2024) has no published paper or architecture details. Media reports
     suggest it uses AlphaZero-style search over Lean proofs. Without primary sources, I cannot compare it meaningfully
-    to `kan-prover`. The IMO 2024 results (4 gold-level problems) are impressive but not reproducible.
+    to `proofctl`. The IMO 2024 results (4 gold-level problems) are impressive but not reproducible.
 - **Proprietary systems.** OpenAI, Anthropic, and Google likely have internal theorem-proving capabilities that are not
     published. Benchmark contamination (training on benchmark theorems) is a known concern for published results.
 - **miniF2F saturation.** With Hilbert at 99.2%, miniF2F is nearly saturated as a benchmark. The field is moving toward
@@ -521,23 +521,23 @@ ______________________________________________________________________
 - **Lean version fragmentation.** Some results are on Lean 3, some on Lean 4. Lean 4 results are not directly comparable
     to Lean 3 results. I have focused on Lean 4 systems where possible.
 - **Reproducibility.** Many benchmark results use large compute budgets (pass@8192 for Kimina-Prover, pass@32 for
-    Goedel-Prover-V2). `kan-prover` operates in a much tighter budget regime (typically 1-10 backend calls per theorem).
+    Goedel-Prover-V2). `proofctl` operates in a much tighter budget regime (typically 1-10 backend calls per theorem).
     Comparison requires normalizing for compute budget.
 - **AlphaProof.** Google DeepMind published full details in Nature (Nov 2025). Architecture: encoder-decoder transformer
     with AlphaZero-style RL, tactic-level best-first search with AND/OR nodes, and test-time reinforcement learning on
     problem variants. Solved 3 IMO 2024 problems including P6 (solved by only 5 human contestants). Not open-source; not
     reproducible. Trained on ~80M auto-formalized statements. The AND-node search structure (requiring all branches
-    proved) is relevant to `kan-prover`'s graph-backed search.
+    proved) is relevant to `proofctl`'s graph-backed search.
 - **LEGO-Prover** (ICLR 2024 Oral). Constructs proofs modularly using a growing library of verified lemmas. During
-    proving, retrieves existing "skills" and creates new ones. miniF2F 50.0%. Directly relevant to `kan-prover`'s
-    helper-lemma management under `KanProverGenerated.Helpers`. Now included in the evidence table.
+    proving, retrieves existing "skills" and creates new ones. miniF2F 50.0%. Directly relevant to `proofctl`'s
+    helper-lemma management under `ProofctlGenerated.Helpers`. Now included in the evidence table.
 
 ### What Would Most Improve Confidence
 
-1. **Running miniF2F through `kan-prover bench`** with a strong backend (DeepSeek-Prover-V2-7B or Goedel-Prover-V2-32B)
+1. **Running miniF2F through `proofctl bench`** with a strong backend (DeepSeek-Prover-V2-7B or Goedel-Prover-V2-32B)
     to establish a concrete baseline.
-1. **Profiling `kan-prover`'s retrieval quality** against ReProver-style dense retrieval on the same workspace.
+1. **Profiling `proofctl`'s retrieval quality** against ReProver-style dense retrieval on the same workspace.
 1. **Testing recursive decomposition** on a set of hard `KanProofs` theorems to see whether single-level vs. recursive
     decomposition makes a practical difference for this project's proof targets.
 1. **Reading the APRIL paper in full** to assess whether its repair-training methodology could produce training data
-    from `kan-prover`'s existing artifact bundles.
+    from `proofctl`'s existing artifact bundles.

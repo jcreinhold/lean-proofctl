@@ -68,7 +68,7 @@ private def workspaceSearchPath (workspaceRoot : System.FilePath) : IO SearchPat
         let packageLib := packageEntry.path / ".lake" / "build" / "lib" / "lean"
         if ← packageLib.isDir then
           entries := entries ++ [packageLib]
-  let helperSearchRoot := workspaceRoot / ".kan-prover-helper-root"
+  let helperSearchRoot := workspaceRoot / ".proofctl-helper-root"
   if ← helperSearchRoot.isDir then
     entries := entries ++ [helperSearchRoot]
   pure entries

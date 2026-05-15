@@ -4,9 +4,9 @@ import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
-from kan_prover.engine.cache import append_jsonl, ensure_store, store_paths
-from kan_prover.engine.config import bind_workspace, discover_tool_paths
-from kan_prover.engine.lean_helpers import (
+from lean_proofctl.engine.cache import append_jsonl, ensure_store, store_paths
+from lean_proofctl.engine.config import bind_workspace, discover_tool_paths
+from lean_proofctl.engine.lean_helpers import (
     ProbePoint,
     ProbeSpan,
     ProofctlDeclarationInventory,
@@ -15,10 +15,14 @@ from kan_prover.engine.lean_helpers import (
     ProofctlWorkspaceDeclarationIndex,
     ProofctlWorkspaceDeclarationIndexEntry,
 )
-from kan_prover.engine.proofctl import ProbeLayer, ProbeResult, ProbeStatus
-from kan_prover.engine.retrieval import EmbeddingRetrievalConfig, collect_retrieval_explanation, collect_retrieval_hits
-from kan_prover.engine.semantic_cache import clear_memory_cache
-from kan_prover.engine.workspace_declaration_index import clear_workspace_index_memory_cache
+from lean_proofctl.engine.proofctl import ProbeLayer, ProbeResult, ProbeStatus
+from lean_proofctl.engine.retrieval import (
+    EmbeddingRetrievalConfig,
+    collect_retrieval_explanation,
+    collect_retrieval_hits,
+)
+from lean_proofctl.engine.semantic_cache import clear_memory_cache
+from lean_proofctl.engine.workspace_declaration_index import clear_workspace_index_memory_cache
 from tests.workspaces import downstream_kan_workspace
 
 
@@ -107,10 +111,10 @@ class TestRetrieval:
                     "target_module_path": "Target.lean",
                     "theorem": "target",
                     "helper_name": "helper_truth",
-                    "module_name": "KanProverGenerated.Helpers.Target.HelperTruth",
+                    "module_name": "ProofctlGenerated.Helpers.Target.HelperTruth",
                     "file_path": str(temp_root / "helper_truth.lean"),
                     "statement": "theorem helper_truth : True :=",
-                    "helper_module_root": "KanProverGenerated.Helpers",
+                    "helper_module_root": "ProofctlGenerated.Helpers",
                 },
             )
             append_jsonl(
@@ -221,7 +225,7 @@ class TestRetrieval:
                 ]
             )
             with patch(
-                "kan_prover.engine.retrieval.declaration_inventory",
+                "lean_proofctl.engine.retrieval.declaration_inventory",
                 return_value=ProbeResult(
                     layer=ProbeLayer.SEMANTIC,
                     command="declaration-inventory",
@@ -299,8 +303,8 @@ class TestRetrieval:
 
             clear_memory_cache()
             with (
-                patch.dict("os.environ", {"KAN_PROVER_SEMANTIC_CACHE_ROOT": str(cache_root)}),
-                patch("kan_prover.engine.proofctl.run_lean_helper", return_value=probe) as runner,
+                patch.dict("os.environ", {"LEAN_PROOFCTL_SEMANTIC_CACHE_ROOT": str(cache_root)}),
+                patch("lean_proofctl.engine.proofctl.run_lean_helper", return_value=probe) as runner,
             ):
                 first_hits, _helpers = collect_retrieval_hits(
                     workspace_root=temp_root,
@@ -317,9 +321,9 @@ class TestRetrieval:
 
             clear_memory_cache()
             with (
-                patch.dict("os.environ", {"KAN_PROVER_SEMANTIC_CACHE_ROOT": str(cache_root)}),
+                patch.dict("os.environ", {"LEAN_PROOFCTL_SEMANTIC_CACHE_ROOT": str(cache_root)}),
                 patch(
-                    "kan_prover.engine.proofctl.run_lean_helper",
+                    "lean_proofctl.engine.proofctl.run_lean_helper",
                     side_effect=AssertionError("warm retrieval should use the persistent cache"),
                 ),
             ):
@@ -341,7 +345,7 @@ class TestRetrieval:
             temp_root = Path(temp_dir)
             problems = temp_root / "Problems"
             problems.mkdir(parents=True, exist_ok=True)
-            artifact_dir = temp_root / "tools" / "kan-prover" / "artifacts" / "runs" / "run-001"
+            artifact_dir = temp_root / "tools" / "proofctl" / "artifacts" / "runs" / "run-001"
             artifact_dir.mkdir(parents=True, exist_ok=True)
             target_file = problems / "Target.lean"
             target_file.write_text(
@@ -359,7 +363,7 @@ class TestRetrieval:
             store = store_paths(temp_root / "artifacts")
             ensure_store(store)
             fake_tool_paths = self.tool_paths.__class__(
-                root=temp_root / "tools" / "kan-prover",
+                root=temp_root / "tools" / "proofctl",
                 prompts=self.tool_paths.prompts,
                 artifacts=self.tool_paths.artifacts,
                 artifact_runs=self.tool_paths.artifact_runs,
@@ -567,7 +571,7 @@ class TestRetrieval:
             clear_workspace_index_memory_cache()
             with (
                 patch(
-                    "kan_prover.engine.retrieval.declaration_inventory",
+                    "lean_proofctl.engine.retrieval.declaration_inventory",
                     return_value=ProbeResult(
                         layer=ProbeLayer.SEMANTIC,
                         command="declaration-inventory",
@@ -578,7 +582,7 @@ class TestRetrieval:
                     ),
                 ) as target_runner,
                 patch(
-                    "kan_prover.engine.workspace_declaration_index.workspace_declaration_index",
+                    "lean_proofctl.engine.workspace_declaration_index.workspace_declaration_index",
                     return_value=ProbeResult(
                         layer=ProbeLayer.SEMANTIC,
                         command="workspace-declaration-index",
@@ -695,9 +699,9 @@ class TestRetrieval:
             clear_memory_cache()
             clear_workspace_index_memory_cache()
             with (
-                patch.dict("os.environ", {"KAN_PROVER_SEMANTIC_CACHE_ROOT": str(cache_root)}),
+                patch.dict("os.environ", {"LEAN_PROOFCTL_SEMANTIC_CACHE_ROOT": str(cache_root)}),
                 patch(
-                    "kan_prover.engine.retrieval.declaration_inventory",
+                    "lean_proofctl.engine.retrieval.declaration_inventory",
                     return_value=ProbeResult(
                         layer=ProbeLayer.SEMANTIC,
                         command="declaration-inventory",
@@ -708,7 +712,7 @@ class TestRetrieval:
                     ),
                 ),
                 patch(
-                    "kan_prover.engine.workspace_declaration_index.workspace_declaration_index",
+                    "lean_proofctl.engine.workspace_declaration_index.workspace_declaration_index",
                     return_value=ProbeResult(
                         layer=ProbeLayer.SEMANTIC,
                         command="workspace-declaration-index",
@@ -739,9 +743,9 @@ class TestRetrieval:
             clear_memory_cache()
             clear_workspace_index_memory_cache()
             with (
-                patch.dict("os.environ", {"KAN_PROVER_SEMANTIC_CACHE_ROOT": str(cache_root)}),
+                patch.dict("os.environ", {"LEAN_PROOFCTL_SEMANTIC_CACHE_ROOT": str(cache_root)}),
                 patch(
-                    "kan_prover.engine.retrieval.declaration_inventory",
+                    "lean_proofctl.engine.retrieval.declaration_inventory",
                     return_value=ProbeResult(
                         layer=ProbeLayer.SEMANTIC,
                         command="declaration-inventory",
@@ -752,7 +756,7 @@ class TestRetrieval:
                     ),
                 ),
                 patch(
-                    "kan_prover.engine.workspace_declaration_index.workspace_declaration_index",
+                    "lean_proofctl.engine.workspace_declaration_index.workspace_declaration_index",
                     side_effect=AssertionError("warm retrieval should reuse the persisted workspace index"),
                 ),
             ):
@@ -784,9 +788,9 @@ class TestRetrieval:
             clear_memory_cache()
             clear_workspace_index_memory_cache()
             with (
-                patch.dict("os.environ", {"KAN_PROVER_SEMANTIC_CACHE_ROOT": str(cache_root)}),
+                patch.dict("os.environ", {"LEAN_PROOFCTL_SEMANTIC_CACHE_ROOT": str(cache_root)}),
                 patch(
-                    "kan_prover.engine.retrieval.declaration_inventory",
+                    "lean_proofctl.engine.retrieval.declaration_inventory",
                     return_value=ProbeResult(
                         layer=ProbeLayer.SEMANTIC,
                         command="declaration-inventory",
@@ -797,7 +801,7 @@ class TestRetrieval:
                     ),
                 ),
                 patch(
-                    "kan_prover.engine.workspace_declaration_index.workspace_declaration_index",
+                    "lean_proofctl.engine.workspace_declaration_index.workspace_declaration_index",
                     return_value=ProbeResult(
                         layer=ProbeLayer.SEMANTIC,
                         command="workspace-declaration-index",

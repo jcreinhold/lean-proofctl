@@ -8,10 +8,10 @@ from unittest.mock import patch
 
 import pytest
 
-from kan_prover.cli.commands import session, show
-from kan_prover.cli.main import _render_show_session_report
-from kan_prover.engine.config import ToolPaths, discover_tool_paths
-from kan_prover.engine.models import SessionStatus
+from lean_proofctl.cli.commands import session, show
+from lean_proofctl.cli.main import _render_show_session_report
+from lean_proofctl.engine.config import ToolPaths, discover_tool_paths
+from lean_proofctl.engine.models import SessionStatus
 
 GOOD_BODY = """by
   exact True.intro
@@ -42,7 +42,7 @@ class TestSessionCommand:
                 timeout_seconds=60.0,
             )
             with patch(
-                "kan_prover.cli.commands.session.discover_tool_paths",
+                "lean_proofctl.cli.commands.session.discover_tool_paths",
                 return_value=self._temp_paths(temp_artifacts),
             ):
                 result, exit_code = session.run_start(args)
@@ -73,7 +73,7 @@ class TestSessionCommand:
             body_file.write_text(GOOD_BODY, encoding="utf-8")
 
             with patch(
-                "kan_prover.cli.commands.session.discover_tool_paths",
+                "lean_proofctl.cli.commands.session.discover_tool_paths",
                 return_value=self._temp_paths(temp_artifacts),
             ):
                 start_result, start_exit = session.run_start(
@@ -157,7 +157,7 @@ class TestSessionCommand:
             body_file.write_text(GOOD_BODY, encoding="utf-8")
 
             with patch(
-                "kan_prover.cli.commands.session.discover_tool_paths",
+                "lean_proofctl.cli.commands.session.discover_tool_paths",
                 return_value=self._temp_paths(temp_artifacts),
             ):
                 start_result, _start_exit = session.run_start(
@@ -181,7 +181,7 @@ class TestSessionCommand:
                 )
 
             with patch(
-                "kan_prover.cli.commands.show.discover_tool_paths",
+                "lean_proofctl.cli.commands.show.discover_tool_paths",
                 return_value=self._temp_paths(temp_artifacts),
             ):
                 result, exit_code = show.run_show_session(

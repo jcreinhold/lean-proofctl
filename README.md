@@ -1,6 +1,6 @@
-# kan-prover
+# lean-proofctl
 
-`kan-prover` is a verifier-first proof assistant for arbitrary Lake workspaces.
+`lean-proofctl` provides the `proofctl` command, a verifier-first proof assistant for arbitrary Lake workspaces.
 
 - Lean and Lake are the only proof authority.
 - Python owns orchestration, artifacts, replay, and backend calls.
@@ -21,15 +21,15 @@ uv sync --group dev
 Use `--demo` only for the bundled demo workspace under `lean-runtime/`:
 
 ```sh
-uv run kan-prover doctor --demo
-uv run kan-prover init --demo --skip-build
+uv run proofctl doctor --demo
+uv run proofctl init --demo --skip-build
 ```
 
 For a real Lake workspace, bind to that workspace directly:
 
 ```sh
-uv run kan-prover doctor --workspace /path/to/workspace
-uv run kan-prover init --workspace /path/to/workspace
+uv run proofctl doctor --workspace /path/to/workspace
+uv run proofctl init --workspace /path/to/workspace
 ```
 
 You do not need to copy a target workspace under this repository.
@@ -84,7 +84,7 @@ The usual operator path is:
 only when you want one extra full-file `lake lean` check before the command returns.
 
 ```sh
-uv run kan-prover --json inspect \
+uv run proofctl --json inspect \
   --workspace /Users/jcreinhold/Code/kan \
   /Users/jcreinhold/Code/kan/KanProofs/Algebra/ControlFlowGrades.lean \
   --theorem CFGrade.le_refl \
@@ -103,7 +103,7 @@ Read the result before editing:
 To ask for the optional extra full-file check:
 
 ```sh
-uv run kan-prover --json inspect \
+uv run proofctl --json inspect \
   --workspace /Users/jcreinhold/Code/kan \
   /Users/jcreinhold/Code/kan/KanProofs/Algebra/ControlFlowGrades.lean \
   --theorem CFGrade.le_refl \
@@ -116,7 +116,7 @@ uv run kan-prover --json inspect \
 `--verify-file-state` only when you want the extra full-file sandbox check.
 
 ```sh
-uv run kan-prover --json retrieve \
+uv run proofctl --json retrieve \
   --workspace /Users/jcreinhold/Code/kan \
   /Users/jcreinhold/Code/kan/KanProofs/Algebra/ControlFlowGrades.lean \
   --theorem CFGrade.le_refl \
@@ -130,22 +130,22 @@ Use `--enable-embedding-retrieval` only when semantic similarity is worth the ex
 Use `repair` when you already have a plausible full theorem body:
 
 ```sh
-uv run kan-prover --json repair \
+uv run proofctl --json repair \
   --workspace /Users/jcreinhold/Code/kan \
   /Users/jcreinhold/Code/kan/KanProofs/Algebra/ControlFlowGrades.lean \
   --theorem CFGrade.le_refl \
   --agent none \
-  --candidate-file /Users/jcreinhold/Code/kan-prover/tests/acceptance/repo_root_cfgrade_le_refl.body.lean
+  --candidate-file /Users/jcreinhold/Code/lean-proofctl/tests/acceptance/repo_root_cfgrade_le_refl.body.lean
 ```
 
-`--agent none` means the outer agent supplies the proof text and `kan-prover` only verifies it.
+`--agent none` means the outer agent supplies the proof text and `proofctl` only verifies it.
 
 ### Iterate In One Sandbox
 
 Use theorem sessions when you want to replace the full body step by step and inspect updated goals in the same sandbox:
 
 ```sh
-uv run kan-prover session start \
+uv run proofctl session start \
   --workspace /Users/jcreinhold/Code/kan \
   /Users/jcreinhold/Code/kan/KanProofs/Algebra/ControlFlowGrades.lean \
   --theorem CFGrade.le_refl
@@ -153,10 +153,10 @@ uv run kan-prover session start \
 
 Then use:
 
-- `uv run kan-prover session goals SESSION_ID`
-- `uv run kan-prover session step SESSION_ID --body-file /tmp/CFGrade.le_refl.body.lean`
-- `uv run kan-prover session checkpoint SESSION_ID --label after-case-split`
-- `uv run kan-prover session finish SESSION_ID`
+- `uv run proofctl session goals SESSION_ID`
+- `uv run proofctl session step SESSION_ID --body-file /tmp/CFGrade.le_refl.body.lean`
+- `uv run proofctl session checkpoint SESSION_ID --label after-case-split`
+- `uv run proofctl session finish SESSION_ID`
 
 `session start` does not eagerly start a live Lean worker. It creates the session and records the first theorem context
 on the cheap one-shot path. Repeated same-process follow-up work may promote later semantic requests to the live
@@ -170,7 +170,7 @@ body.
 Use `prove` when the theorem needs branching, helper work, or repeated session search:
 
 ```sh
-uv run kan-prover --json prove \
+uv run proofctl --json prove \
   --workspace /Users/jcreinhold/Code/kan \
   /Users/jcreinhold/Code/kan/KanProofs/Algebra/ControlFlowGrades.lean \
   --theorem CFGrade.le_refl \
@@ -258,13 +258,13 @@ The default `pytest` config excludes `integration`, `slow`, and `acceptance` tes
 From this repository root:
 
 ```sh
-uv run kan-prover --help
-uv run kan-prover inspect --help
-uv run kan-prover retrieve --help
-uv run kan-prover session --help
-uv run kan-prover show --help
-uv run kan-prover show run --help
-uv run kan-prover show session --help
+uv run proofctl --help
+uv run proofctl inspect --help
+uv run proofctl retrieve --help
+uv run proofctl session --help
+uv run proofctl show --help
+uv run proofctl show run --help
+uv run proofctl show session --help
 ```
 
 Repo checks for this tool:

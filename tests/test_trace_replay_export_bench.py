@@ -9,11 +9,11 @@ from unittest.mock import patch
 
 import pytest
 
-from kan_prover.cli.commands import bench, export, prove, repair, replay, show, solve, trace
-from kan_prover.cli.main import _render_show_run_report
-from kan_prover.engine import bench as bench_engine
-from kan_prover.engine.config import ToolPaths, bind_workspace, discover_tool_paths
-from kan_prover.engine.models import BatchStatus, InspectionStatus, JsonValue, ReplayMode
+from lean_proofctl.cli.commands import bench, export, prove, repair, replay, show, solve, trace
+from lean_proofctl.cli.main import _render_show_run_report
+from lean_proofctl.engine import bench as bench_engine
+from lean_proofctl.engine.config import ToolPaths, bind_workspace, discover_tool_paths
+from lean_proofctl.engine.models import BatchStatus, InspectionStatus, JsonValue, ReplayMode
 from tests.workspaces import downstream_kan_workspace
 
 GOOD_BODY = """by
@@ -94,7 +94,7 @@ class TestInspectionCommand:
             )
             args = argparse.Namespace(run_id=source_run_id)
             with patch(
-                "kan_prover.cli.commands.trace.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                "lean_proofctl.cli.commands.trace.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
             ):
                 result, exit_code = trace.run_command(args)
             assert exit_code == 0
@@ -117,7 +117,7 @@ class TestInspectionCommand:
                 candidate_path=candidate_path,
             )
             with patch(
-                "kan_prover.cli.commands.show.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                "lean_proofctl.cli.commands.show.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
             ):
                 result, exit_code = show.run_show_run(argparse.Namespace(run_id=source_run_id, attempt=None))
             assert exit_code == 0
@@ -162,7 +162,7 @@ class TestInspectionCommand:
             )
 
             with patch(
-                "kan_prover.cli.commands.trace.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                "lean_proofctl.cli.commands.trace.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
             ):
                 trace_result, trace_exit = trace.run_command(argparse.Namespace(run_id=source_run_id))
             assert trace_exit == 0
@@ -170,7 +170,7 @@ class TestInspectionCommand:
 
             output_path = temp_root / "prove-bundle.json"
             with patch(
-                "kan_prover.cli.commands.export.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                "lean_proofctl.cli.commands.export.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
             ):
                 _export_result, export_exit = export.run_command(
                     argparse.Namespace(
@@ -188,7 +188,7 @@ class TestInspectionCommand:
             assert bundle["graph"]["branch_node_ids"]
 
             with patch(
-                "kan_prover.cli.commands.replay.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                "lean_proofctl.cli.commands.replay.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
             ):
                 replay_result, replay_exit = replay.run_command(
                     argparse.Namespace(
@@ -231,7 +231,7 @@ class TestInspectionCommand:
                 requery_agent=False,
             )
             with patch(
-                "kan_prover.cli.commands.replay.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                "lean_proofctl.cli.commands.replay.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
             ):
                 result, exit_code = replay.run_command(args)
             assert exit_code == 0
@@ -262,7 +262,7 @@ class TestInspectionCommand:
                 run_id=source_run_id, workspace=str(workspace_root), attempt=None, output=str(output_path)
             )
             with patch(
-                "kan_prover.cli.commands.export.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                "lean_proofctl.cli.commands.export.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
             ):
                 result, exit_code = export.run_command(args)
             assert exit_code == 0
@@ -272,7 +272,7 @@ class TestInspectionCommand:
             assert bundle["workspace_root"] == str(workspace_root)
             assert bundle["target_module_path"] == "Problems/repair_target.lean"
             assert bundle["theorem"] == "fix_me"
-            assert bundle["helper_module_root"] == "KanProverGenerated.Helpers"
+            assert bundle["helper_module_root"] == "ProofctlGenerated.Helpers"
             assert bundle["proof_target"]["declaration_name"] == "fix_me"
             assert bundle["proof_target"]["safe_edit"]["kind"] == "replace-body"
             assert bundle["proof_target"]["proof_state_available"] is True
@@ -307,7 +307,7 @@ class TestInspectionCommand:
                 run_id=source_run_id, workspace=str(self.repo_root), attempt=None, output=str(output_path)
             )
             with patch(
-                "kan_prover.cli.commands.export.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                "lean_proofctl.cli.commands.export.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
             ):
                 result, exit_code = export.run_command(args)
             assert exit_code == 0
@@ -344,7 +344,7 @@ class TestInspectionCommand:
             output_path = temp_root / "helper-bundle.json"
             args = argparse.Namespace(run_id=source_run_id, workspace=None, attempt=None, output=str(output_path))
             with patch(
-                "kan_prover.cli.commands.export.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                "lean_proofctl.cli.commands.export.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
             ):
                 result, exit_code = export.run_command(args)
             assert exit_code == 0
@@ -352,7 +352,7 @@ class TestInspectionCommand:
             bundle = json.loads(output_path.read_text(encoding="utf-8"))
             assert bundle["workspace_root"] == str(workspace_root)
             assert bundle["target_module_path"] == "Problems/helper_target.lean"
-            assert bundle["helper_module_root"] == "KanProverGenerated.Helpers"
+            assert bundle["helper_module_root"] == "ProofctlGenerated.Helpers"
             assert bundle["proof_target"]["declaration_name"] == "helper_target"
             assert bundle["proof_target"]["safe_edit"]["kind"] == "replace-body"
             assert bundle["retrieval_hits"]
@@ -394,7 +394,7 @@ class TestInspectionCommand:
 
             output_path = temp_root / "recursive-helper-bundle.json"
             with patch(
-                "kan_prover.cli.commands.export.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                "lean_proofctl.cli.commands.export.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
             ):
                 result, export_exit = export.run_command(
                     argparse.Namespace(
@@ -419,7 +419,7 @@ class TestInspectionCommand:
             assert graph_helper_depths == [1, 2]
 
             with patch(
-                "kan_prover.cli.commands.replay.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                "lean_proofctl.cli.commands.replay.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
             ):
                 replay_result, replay_exit = replay.run_command(
                     argparse.Namespace(
@@ -469,7 +469,7 @@ class TestInspectionCommand:
             output_path = temp_root / "aggregate.json"
             args = argparse.Namespace(spec=str(spec_path), workspace=str(workspace_root), output=str(output_path))
             with patch(
-                "kan_prover.cli.commands.bench.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                "lean_proofctl.cli.commands.bench.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
             ):
                 result, exit_code = bench.run_command(args)
             assert exit_code == 1
@@ -575,7 +575,7 @@ class TestInspectionCommand:
             output_path = temp_root / "aggregate.json"
             args = argparse.Namespace(spec=str(spec_path), workspace=str(workspace_root), output=str(output_path))
             with patch(
-                "kan_prover.cli.commands.bench.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                "lean_proofctl.cli.commands.bench.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
             ):
                 result, exit_code = bench.run_command(args)
             assert exit_code == 1
@@ -684,7 +684,7 @@ class TestInspectionCommand:
             )
             args = argparse.Namespace(spec=str(spec_path), workspace=str(workspace_root), output=None)
             with patch(
-                "kan_prover.cli.commands.bench.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+                "lean_proofctl.cli.commands.bench.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
             ):
                 result, exit_code = bench.run_command(args)
 
@@ -741,7 +741,9 @@ class TestInspectionCommand:
             timeout_seconds=timeout_seconds,
             apply=False,
         )
-        with patch("kan_prover.cli.commands.repair.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)):
+        with patch(
+            "lean_proofctl.cli.commands.repair.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+        ):
             result, exit_code = repair.run_command(args)
         assert exit_code == 0
         return result.run_id
@@ -767,7 +769,9 @@ class TestInspectionCommand:
             max_attempts=1,
             apply=False,
         )
-        with patch("kan_prover.cli.commands.solve.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)):
+        with patch(
+            "lean_proofctl.cli.commands.solve.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+        ):
             result, exit_code = solve.run_command(args)
         assert exit_code == 0
         return result.run_id
@@ -796,7 +800,9 @@ class TestInspectionCommand:
             timeout_seconds=60.0,
             max_nodes=6,
         )
-        with patch("kan_prover.cli.commands.prove.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)):
+        with patch(
+            "lean_proofctl.cli.commands.prove.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+        ):
             result, exit_code = prove.run_command(args)
         assert exit_code == 0
         return result.run_id
@@ -823,7 +829,9 @@ class TestInspectionCommand:
             timeout_seconds=60.0,
             max_nodes=max_nodes,
         )
-        with patch("kan_prover.cli.commands.prove.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)):
+        with patch(
+            "lean_proofctl.cli.commands.prove.discover_tool_paths", return_value=self._temp_paths(temp_artifacts)
+        ):
             result, exit_code = prove.run_command(args)
         return result.run_id, exit_code
 

@@ -8,11 +8,11 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from kan_prover.adapters.base import BackendCommandError
-from kan_prover.adapters.claude import ClaudeBackend
-from kan_prover.adapters.codex import CodexBackend
-from kan_prover.adapters.none import NoneBackend
-from kan_prover.engine.models import (
+from lean_proofctl.adapters.base import BackendCommandError
+from lean_proofctl.adapters.claude import ClaudeBackend
+from lean_proofctl.adapters.codex import CodexBackend
+from lean_proofctl.adapters.none import NoneBackend
+from lean_proofctl.engine.models import (
     AgentRequest,
     AppendTacticTextAction,
     Diagnostic,
@@ -39,7 +39,7 @@ class TestStrictAdapters:
         assert payload["task_kind"] == "repair"
         assert payload["theorem_name"] == "Demo.fix_me"
         assert payload["target_module_path"] == "Problems/Demo.lean"
-        assert payload["helper_module_root"] == "KanProverGenerated.Helpers"
+        assert payload["helper_module_root"] == "ProofctlGenerated.Helpers"
         assert payload["editable_span"] == {"start_line": 10, "end_line": 12}
         assert payload["allowed_output_files"] == ["Problems/Demo.lean"]
         assert payload["repair_strategy"] == "targeted-correction"
@@ -101,8 +101,8 @@ class TestStrictAdapters:
             assert isinstance(helper_action, ProposeHelperLemmaAction)
             assert helper_action.helper.helper_name == "helper_truth"
 
-    @patch("kan_prover.adapters.claude.subprocess.run")
-    @patch("kan_prover.adapters.claude.shutil.which")
+    @patch("lean_proofctl.adapters.claude.subprocess.run")
+    @patch("lean_proofctl.adapters.claude.shutil.which")
     def test_claude_adapter_parses_structured_output(self, mock_which: MagicMock, mock_run: MagicMock) -> None:
         mock_which.return_value = "/usr/bin/claude"
         mock_run.return_value = subprocess.CompletedProcess(
@@ -120,8 +120,8 @@ class TestStrictAdapters:
         assert response.candidates[0].theorem == "Demo.fix_me"
         assert "--json-schema" in response.invocation.argv
 
-    @patch("kan_prover.adapters.codex.subprocess.run")
-    @patch("kan_prover.adapters.codex.shutil.which")
+    @patch("lean_proofctl.adapters.codex.subprocess.run")
+    @patch("lean_proofctl.adapters.codex.shutil.which")
     def test_codex_adapter_parses_jsonl_result_payload(self, mock_which: MagicMock, mock_run: MagicMock) -> None:
         mock_which.return_value = "/usr/bin/codex"
         mock_run.return_value = subprocess.CompletedProcess(
@@ -139,8 +139,8 @@ class TestStrictAdapters:
         assert response.result_kind.value == "no_progress"
         assert response.message == "stuck"
 
-    @patch("kan_prover.adapters.codex.subprocess.run")
-    @patch("kan_prover.adapters.codex.shutil.which")
+    @patch("lean_proofctl.adapters.codex.subprocess.run")
+    @patch("lean_proofctl.adapters.codex.shutil.which")
     def test_codex_adapter_accepts_empty_candidate_list_for_engine_classification(
         self, mock_which: MagicMock, mock_run: MagicMock
     ) -> None:
@@ -160,8 +160,8 @@ class TestStrictAdapters:
         assert response.candidate_parse_errors == []
         assert response.message == "nothing usable"
 
-    @patch("kan_prover.adapters.claude.subprocess.run")
-    @patch("kan_prover.adapters.claude.shutil.which")
+    @patch("lean_proofctl.adapters.claude.subprocess.run")
+    @patch("lean_proofctl.adapters.claude.shutil.which")
     def test_claude_adapter_keeps_valid_candidates_and_records_invalid_ones(
         self, mock_which: MagicMock, mock_run: MagicMock
     ) -> None:
@@ -181,8 +181,8 @@ class TestStrictAdapters:
         assert len(response.candidate_parse_errors) == 1
         assert "candidate 2" in response.candidate_parse_errors[0]
 
-    @patch("kan_prover.adapters.claude.subprocess.run")
-    @patch("kan_prover.adapters.claude.shutil.which")
+    @patch("lean_proofctl.adapters.claude.subprocess.run")
+    @patch("lean_proofctl.adapters.claude.shutil.which")
     def test_claude_adapter_parses_theorem_step_actions(self, mock_which: MagicMock, mock_run: MagicMock) -> None:
         mock_which.return_value = "/usr/bin/claude"
         mock_run.return_value = subprocess.CompletedProcess(
@@ -201,8 +201,8 @@ class TestStrictAdapters:
         assert response.theorem_session_actions[1].kind == TheoremSessionActionKind.SUGGEST_CHECKPOINT_LABEL
         assert response.prompt_path.endswith("theorem_step.md")
 
-    @patch("kan_prover.adapters.claude.subprocess.run")
-    @patch("kan_prover.adapters.claude.shutil.which")
+    @patch("lean_proofctl.adapters.claude.subprocess.run")
+    @patch("lean_proofctl.adapters.claude.shutil.which")
     def test_malformed_backend_output_fails_closed(self, mock_which: MagicMock, mock_run: MagicMock) -> None:
         mock_which.return_value = "/usr/bin/claude"
         mock_run.return_value = subprocess.CompletedProcess(
@@ -216,7 +216,7 @@ class TestStrictAdapters:
         assert error.value.backend == "claude"
         assert error.value.backend_error_kind == "protocol-failed"
 
-    @patch("kan_prover.adapters.codex.shutil.which", return_value=None)
+    @patch("lean_proofctl.adapters.codex.shutil.which", return_value=None)
     def test_unavailable_backend_fails_clearly(self, _mock_which: MagicMock) -> None:
         with pytest.raises(BackendCommandError) as error:
             CodexBackend().propose(_sample_request())
@@ -235,8 +235,8 @@ def _sample_request(*, attempt_index: int = 1, task_kind: TaskKind = TaskKind.RE
         workspace_package="Demo",
         sandbox_workspace_root="/tmp/workspace/.sandbox",
         target_module_path="Problems/Demo.lean",
-        helper_module_root="KanProverGenerated.Helpers",
-        helper_root_dir="/tmp/workspace/.sandbox/KanProverGenerated/Helpers",
+        helper_module_root="ProofctlGenerated.Helpers",
+        helper_root_dir="/tmp/workspace/.sandbox/ProofctlGenerated/Helpers",
         theorem_statement="theorem Demo.fix_me : True :=",
         editable_span=FileSpan(start_line=10, end_line=12),
         source_window=SourceWindow(

@@ -9,7 +9,7 @@ from pathlib import Path
 def downstream_kan_workspace(tool_root: Path) -> Path:
     """Find the Kan checkout used by downstream workspace tests."""
     candidates: list[Path] = []
-    if env_root := os.environ.get("KAN_PROVER_DOWNSTREAM_WORKSPACE"):
+    if env_root := os.environ.get("LEAN_PROOFCTL_DOWNSTREAM_WORKSPACE"):
         candidates.append(Path(env_root))
     candidates.extend(
         [
@@ -31,7 +31,7 @@ def downstream_kan_workspace(tool_root: Path) -> Path:
     searched = ", ".join(str(candidate) for candidate in candidates)
     msg = (
         "Could not find a downstream Kan workspace for tests. "
-        "Set KAN_PROVER_DOWNSTREAM_WORKSPACE to a checkout containing lakefile.toml, lean-toolchain, and KanProofs. "
+        "Set LEAN_PROOFCTL_DOWNSTREAM_WORKSPACE to a checkout containing lakefile.toml, lean-toolchain, and KanProofs. "
         f"Searched: {searched}"
     )
     raise FileNotFoundError(msg)

@@ -10,9 +10,9 @@ from unittest.mock import patch
 
 import pytest
 
-from kan_prover.cli.commands import doctor, init
-from kan_prover.engine.config import bind_workspace, discover_tool_paths
-from kan_prover.engine.models import DoctorCheckStatus, DoctorStatus
+from lean_proofctl.cli.commands import doctor, init
+from lean_proofctl.engine.config import bind_workspace, discover_tool_paths
+from lean_proofctl.engine.models import DoctorCheckStatus, DoctorStatus
 
 
 class TestInitDoctor:
@@ -118,7 +118,7 @@ class TestInitDoctor:
             )
             real_which = shutil.which
             with patch(
-                "kan_prover.engine.doctor.shutil.which",
+                "lean_proofctl.engine.doctor.shutil.which",
                 side_effect=lambda command: None if command == "codex" else real_which(command),
             ):
                 result, exit_code = doctor.run_command(args)
@@ -173,8 +173,8 @@ class TestInitDoctor:
                 )
 
             with (
-                patch("kan_prover.engine.doctor.shutil.which", side_effect=fake_which),
-                patch("kan_prover.engine.doctor.subprocess.run", side_effect=fake_run),
+                patch("lean_proofctl.engine.doctor.shutil.which", side_effect=fake_which),
+                patch("lean_proofctl.engine.doctor.subprocess.run", side_effect=fake_run),
             ):
                 result, exit_code = doctor.run_command(args)
         assert exit_code == 1
@@ -212,7 +212,7 @@ class TestInitDoctor:
                 json=False,
                 jsonl=False,
             )
-            with patch("kan_prover.cli.commands.init.Path.cwd", return_value=workspace_root):
+            with patch("lean_proofctl.cli.commands.init.Path.cwd", return_value=workspace_root):
                 result, exit_code = init.run_command(args)
         assert exit_code == 0
         assert result.workspace_root == str(workspace_root)
@@ -232,7 +232,7 @@ class TestInitDoctor:
             )
             with (
                 patch(
-                    "kan_prover.cli.commands.init.build_semantic_probe_executable",
+                    "lean_proofctl.cli.commands.init.build_semantic_probe_executable",
                     return_value=subprocess.CompletedProcess(
                         args=["lake", "build", "SemanticProbe"],
                         returncode=1,
@@ -240,7 +240,7 @@ class TestInitDoctor:
                         stderr="probe stderr",
                     ),
                 ),
-                patch("kan_prover.cli.commands.init.run_lake_build") as run_lake_build,
+                patch("lean_proofctl.cli.commands.init.run_lake_build") as run_lake_build,
             ):
                 result, exit_code = init.run_command(args)
         assert exit_code == 4

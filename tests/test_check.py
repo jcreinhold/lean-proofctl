@@ -1,4 +1,4 @@
-"""Fixture-based tests for `kan-prover check`."""
+"""Fixture-based tests for `proofctl check`."""
 
 import argparse
 import io
@@ -10,10 +10,10 @@ from unittest.mock import patch
 
 import pytest
 
-from kan_prover.cli.commands import check
-from kan_prover.cli.main import main
-from kan_prover.engine.config import ToolPaths, bind_workspace, discover_tool_paths
-from kan_prover.engine.models import CheckResult, CheckStatus, DiagnosticClass, ExitCode, JsonValue
+from lean_proofctl.cli.commands import check
+from lean_proofctl.cli.main import main
+from lean_proofctl.engine.config import ToolPaths, bind_workspace, discover_tool_paths
+from lean_proofctl.engine.models import CheckResult, CheckStatus, DiagnosticClass, ExitCode, JsonValue
 from tests.workspaces import downstream_kan_workspace
 
 
@@ -70,7 +70,7 @@ class TestCheckCommand:
             stderr = io.StringIO()
             argv = ["--json", "check", "--workspace", str(self.demo_workspace.root), str(fixture)]
             with (
-                patch("kan_prover.cli.commands.check.discover_tool_paths", return_value=temp_paths),
+                patch("lean_proofctl.cli.commands.check.discover_tool_paths", return_value=temp_paths),
                 redirect_stdout(stdout),
                 redirect_stderr(stderr),
             ):
@@ -78,7 +78,7 @@ class TestCheckCommand:
         assert exit_code == 0
         payload = json.loads(stdout.getvalue())
         assert payload["status"] == "ok"
-        assert "kan-prover check ok:" in stderr.getvalue()
+        assert "proofctl check ok:" in stderr.getvalue()
 
     def test_init_skip_build(self) -> None:
         stdout = io.StringIO()
@@ -90,7 +90,7 @@ class TestCheckCommand:
         assert payload["status"] == "ok"
         assert not payload["build_ran"]
         assert payload["workspace_role"] == "bundled-demo"
-        assert "kan-prover init ok:" in stderr.getvalue()
+        assert "proofctl init ok:" in stderr.getvalue()
 
     @pytest.mark.integration
     def test_explicit_workspace_binding_uses_demo_runtime(self) -> None:
@@ -105,7 +105,7 @@ class TestCheckCommand:
                 json=False,
                 jsonl=False,
             )
-            with patch("kan_prover.cli.commands.check.discover_tool_paths", return_value=temp_paths):
+            with patch("lean_proofctl.cli.commands.check.discover_tool_paths", return_value=temp_paths):
                 result, exit_code = check.run_command(args)
         assert exit_code == 0
         assert result.workspace.root == str(self.demo_workspace.root)
@@ -123,7 +123,7 @@ class TestCheckCommand:
                 json=False,
                 jsonl=False,
             )
-            with patch("kan_prover.cli.commands.check.discover_tool_paths", return_value=temp_paths):
+            with patch("lean_proofctl.cli.commands.check.discover_tool_paths", return_value=temp_paths):
                 result, exit_code = check.run_command(args)
         assert exit_code == 0
         assert result.workspace.root == str(self.repo_workspace.root)
@@ -144,8 +144,8 @@ class TestCheckCommand:
                 jsonl=False,
             )
             with (
-                patch("kan_prover.cli.commands.check.discover_tool_paths", return_value=temp_paths),
-                patch("kan_prover.engine.config.Path.cwd", return_value=temp_root),
+                patch("lean_proofctl.cli.commands.check.discover_tool_paths", return_value=temp_paths),
+                patch("lean_proofctl.engine.config.Path.cwd", return_value=temp_root),
                 pytest.raises(FileNotFoundError),
             ):
                 check.run_command(args)
@@ -162,7 +162,7 @@ class TestCheckCommand:
                 json=False,
                 jsonl=False,
             )
-            with patch("kan_prover.cli.commands.check.discover_tool_paths", return_value=temp_paths):
+            with patch("lean_proofctl.cli.commands.check.discover_tool_paths", return_value=temp_paths):
                 result, exit_code = check.run_command(args)
             run_dir = temp_artifacts / "runs" / result.run_id
             index_path = temp_artifacts / "index.jsonl"

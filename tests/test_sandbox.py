@@ -4,9 +4,9 @@ import subprocess
 import tempfile
 from pathlib import Path
 
-from kan_prover.engine.config import bind_workspace, discover_tool_paths
-from kan_prover.engine.models import SandboxStrategy
-from kan_prover.engine.sandbox import create_sandbox_workspace
+from lean_proofctl.engine.config import bind_workspace, discover_tool_paths
+from lean_proofctl.engine.models import SandboxStrategy
+from lean_proofctl.engine.sandbox import create_sandbox_workspace
 
 
 class TestSandboxWorkspace:
@@ -57,14 +57,14 @@ class TestSandboxWorkspace:
             (workspace_root / ".gitignore").write_text(".lake/\n", encoding="utf-8")
             subprocess.run(["git", "init"], cwd=repo_root, check=True, capture_output=True, text=True)
             subprocess.run(
-                ["git", "config", "user.email", "kan-prover-tests@example.com"],
+                ["git", "config", "user.email", "proofctl-tests@example.com"],
                 cwd=repo_root,
                 check=True,
                 capture_output=True,
                 text=True,
             )
             subprocess.run(
-                ["git", "config", "user.name", "kan-prover tests"],
+                ["git", "config", "user.name", "proofctl tests"],
                 cwd=repo_root,
                 check=True,
                 capture_output=True,
@@ -125,14 +125,14 @@ class TestSandboxWorkspace:
         (workspace_root / "Problems").mkdir(parents=True, exist_ok=True)
         subprocess.run(["git", "init"], cwd=workspace_root, check=True, capture_output=True, text=True)
         subprocess.run(
-            ["git", "config", "user.email", "kan-prover-tests@example.com"],
+            ["git", "config", "user.email", "proofctl-tests@example.com"],
             cwd=workspace_root,
             check=True,
             capture_output=True,
             text=True,
         )
         subprocess.run(
-            ["git", "config", "user.name", "kan-prover tests"],
+            ["git", "config", "user.name", "proofctl tests"],
             cwd=workspace_root,
             check=True,
             capture_output=True,
@@ -157,14 +157,14 @@ class TestSandboxWorkspace:
         (workspace_root / ".gitignore").write_text(".lake/\n", encoding="utf-8")
         subprocess.run(["git", "init"], cwd=workspace_root, check=True, capture_output=True, text=True)
         subprocess.run(
-            ["git", "config", "user.email", "kan-prover-tests@example.com"],
+            ["git", "config", "user.email", "proofctl-tests@example.com"],
             cwd=workspace_root,
             check=True,
             capture_output=True,
             text=True,
         )
         subprocess.run(
-            ["git", "config", "user.name", "kan-prover tests"],
+            ["git", "config", "user.name", "proofctl tests"],
             cwd=workspace_root,
             check=True,
             capture_output=True,
